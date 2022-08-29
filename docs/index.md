@@ -1,4 +1,4 @@
-# Welcome to MkDocs
+# 介绍
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 
@@ -15,19 +15,4 @@ For full documentation visit [mkdocs.org](https://www.mkdocs.org).
     docs/
         index.md  # The documentation homepage.
         ...       # Other markdown pages, images and other files.
-## Company
 
-* baidu
-* bytes
-
-## Name
-
-* cui
-
-## Name2
-
-* donglin
-
-## Name3
-
-* cuidonglin

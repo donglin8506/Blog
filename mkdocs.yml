@@ -3,3 +3,53 @@ site_name: 崔东林的视觉技术相关博客 # 左上角标题
 site_url: https://donglin8506.github.io/ComputerVisionBlog
 site_author: 崔东林
 site_description: 崔东林的视觉技术相关博客
+
+# Repository
+repo_name: donglin8506/ComputerVisionBlog
+repo_url: https://github.com/donglin8506/ComputerVisionBlog
+
+# Copyright
+copyright: Copyright &copy; 2022 Donglin Cui
+
+theme:
+  name: material
+  language: zh # 一些提示性文字变成中文，例如搜索框的`Search` 变成 `搜索`
+  icon:
+    repo: fontawesome/brands/github # 右上角github标识设置
+  palette: # 页面dark/light切换
+    - scheme: default
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs # 顶栏使用Tab分割
+    - navigation.top # 返回顶部的按钮 上滑时出现
+    - navigation.indexes # Tab会有一个index.md 而不是打开Tab时显示第一篇文章
+    - navigation.expand # 打开Tab时左侧目录全部展开
+    - search.suggest # 搜索输入一些字母时推荐补全整个单词
+    - search.highlight # 搜索出的文章关键词高亮
+
+extra:
+  social: # icons
+    - icon: fontawesome/brands/github
+      link: https://github.com/donglin8506
+      name: GitHub | Donglin-Cui
+  
+nav:
+  - Getting started: GettingStarted.md
+  - Object Detection: ObjectDetection.md
+  - Object Tracking: ObjectTracking.md
+  - Object Segmentation: ObjectSegmentation.md
+  - Big Model: BigModel.md
+  - Multi Modality: MultiModality.md
