@@ -1,12 +1,12 @@
 # [Info]
 # site_name: 崔东林的视觉技术相关博客 # 左上角标题
-site_url: https://donglin8506.github.io/ComputerVisionBlog
+site_url: https://donglin8506.github.io/Blog
 site_author: 崔东林
 # site_description: 崔东林的视觉技术相关博客
 
 # Repository
-repo_name: donglin8506/ComputerVisionBlog
-repo_url: https://github.com/donglin8506/ComputerVisionBlog
+repo_name: donglin8506/Blog
+repo_url: https://github.com/donglin8506/Blog
 
 # Copyright
 copyright: Copyright &copy; 2022 Donglin Cui
