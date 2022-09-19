@@ -1,8 +1,8 @@
 # [Info]
-# site_name: 崔东林的视觉技术相关博客 # 左上角标题
+site_name: 从零实现 # 左上角标题
 site_url: https://donglin8506.github.io/Blog
 site_author: 崔东林
-# site_description: 崔东林的视觉技术相关博客
+site_description: 崔东林的技术积累
 
 # Repository
 repo_name: donglin8506/Blog
@@ -47,4 +47,8 @@ extra:
       name: GitHub | Donglin-Cui
   
 nav:
-  - 计算机视觉: ComputerVision.md
+  - mkdocs使用: Mkdocs.md
+  - 论文阅读: paper.md
+  - YOLOV5项目理解: yolov5.md
+  - 个人简介: cuidonglin.md
+  
