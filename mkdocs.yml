@@ -48,7 +48,9 @@ extra:
   
 nav:
   - mkdocs使用: Mkdocs.md
-  - 论文阅读: paper.md
+  - 论文阅读:
+    - paper.md
+    - yolov5_img.md
   - YOLOV5项目理解: yolov5.md
   - 个人简介: cuidonglin.md
   
