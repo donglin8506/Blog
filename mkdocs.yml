@@ -1,5 +1,5 @@
 # [Info]
-site_name: 崔东林的视觉技术相关博客 # 左上角标题
+# site_name: 崔东林的视觉技术相关博客 # 左上角标题
 site_url: https://donglin8506.github.io/ComputerVisionBlog
 site_author: 崔东林
 site_description: 崔东林的视觉技术相关博客
@@ -47,9 +47,4 @@ extra:
       name: GitHub | Donglin-Cui
   
 nav:
-  - Getting started: GettingStarted.md
-  - Object Detection: ObjectDetection.md
-  - Object Tracking: ObjectTracking.md
-  - Object Segmentation: ObjectSegmentation.md
-  - Big Model: BigModel.md
-  - Multi Modality: MultiModality.md
+  - 计算机视觉: ComputerVision.md
