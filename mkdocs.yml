@@ -48,11 +48,19 @@ extra:
   
 nav:
   - mkdocs使用: Mkdocs.md
-  - 论文阅读:
-    - CLIP:
-      - 论文拆解: paper_converge.md
-      - 论文全篇翻译: paper_translate.md
-    - yolov5_img.md
-  - YOLOV5项目理解: yolov5.md
-  - 个人简介: cuidonglin.md
-  
+  - 深度学习基础篇:
+    - transformer介绍: ./deep_learning/transformer.md
+    - 手动实现卷积: ./deep_learning/conv2d.md
+  - 目标检测篇:
+    - yolov5: ./object_detection/ObjectDetection.md
+  - 视觉多模态: 
+    - 论文阅读: 
+      - CLIP:
+        - 论文拆解: ./VisionMultiModal/paper_converge.md
+        - 论文全篇翻译: ./VisionMultiModal/paper_translate.md
+    - 数据集: ./VisionMultiModal/dataset.md
+    - VideoMAE: ./VisionMultiModal/VideoMAE.md
+    - MAE: ./VisionMultiModal/MAE.md
+  - 系统篇: 
+    - Introduction.md
+    - 个人简介: cuidonglin.md
