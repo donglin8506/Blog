@@ -103,8 +103,23 @@ Our MAE learns very high-capacity that generalize well. With MAE pre-training, w
 
 
 
-**Self-supervised learning** approaches have been significant interest in computer vision, often focusing on different pretext tasks for pre-training [15,50,35,59,38,17]
+**Self-supervised learning** approaches have been significant interest in computer vision, often focusing on different pretext tasks for pre-training [15,50,35,59,38,17]. Recently, contrastive learning[3,21] has been popular, e.g., [51,36,22,7], which models image similarity and disimilarity(差异性)(or only similarity[20,8])
+between two or more views. Contrastive and related methods strongly depend on data augmentation[7,20,8]. Autoencoding pursues(追求) a conceptually different direction, and it exhibits(展示) different behaviors as we will present.
 
 
 | 论文名称 | 论文标题翻译 | 论文别名 | 论文时间
 | :------- | :------- | :------ | :--------
+| [15]Unsupervised visual representation learning by context prediction. | 通过上下文预测来进行无监督的视觉表征学习 | - | 2015
+| [50]Unsupervised Learning of Visual Representations using Videos | 使用视频的无监督视频表征学习 | - | 2015-05-04
+| [35]Unsupervised Learning of Visual Representations by Solving Jigsaw Puzzles | 通过解决拼图 的无监督视觉表征学习 | 2016-03-30
+| [59] Colorful Image Colorization | 彩色图像着色 | - | 2016-03-28
+| [38]Learning Features by Watching Objects Move | 通过观察物体移动来学习特征 | - | 2016-12-19
+| [17]Unsupervised Representation Learning by Predicting Image Rotations | 通过预测图片旋转来进行无监督的表征学习 
+| [3]Self-organizing neural network that discovers surfaces in random-dot stereograms | 在随机点立体图中发现表面的自组织神经网络 | - | 2992-01-09
+| [21]Dimensionality Reduction by Learning an Invariant Mapping | 通过学一个不变的映射，来是维度减小 | DrLIM | 2006-06-17
+| [51]Unsupervised Feature Learning via Non-Parametric Instance Discrimination | 通过无参数的实例判别任务来进行无监督特征学习 | - | -
+| [36]Representation Learning with Contrastive Predictive Coding | 基于对比预测编码的表征学习 | - | 2018-07-10
+| [22]Momentum Contrast for Unsupervised Visual Representation Learning | 动量对比方法用于无监督视频表征学习 | MoCo | - 
+| [7]A Simple Framework for Contrastive Learning of Visual Representations | 一种视觉表征对比学习的简单框架 | SimCLR | 2020-02-13
+| [20]Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning | 引导你自己的潜力：一种自监督学习的新方法 | T3C | 2020-06-13
+| [8]Exploring Simple Siamese Representation Learning | 探索简单的连体表示学习 | - | 2020-11-20
