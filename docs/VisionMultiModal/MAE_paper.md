@@ -50,7 +50,7 @@ Driven by this analysis, we present a simple, effective, and scalable form of a 
 Our MAE masks random patches from the input image and reconstructs the missing patches in the pixel space. It has an asymmetric encoder-decoder design. Our encoder operates only on the visible subset of patches (without mask tokens), and our decoder is lightweight and reconstructs the input from the latent representation along with mask tokens (Figure 1). Shifting the mask tokens to the small decoder in our asymmetric(不对称的) encoder-decoder results in a large reduction in computation. Under this design, a very high masking ratio (e.g., 75%) can achieve a win-win scenario(双赢的设想):it optimizes accuracy while allowing the encoder to process only a small portion(e.g., 25%) of patches. This can reduce overall pre-training time by 3x or more and likewise(同样的) reduce memory consumption(消耗), enabling us to easily scale our MAE to large models.
 
 
-Our MAE learns 
+Our MAE learns very high-capacity that generalize well. With MAE pre-training, we can train data-hungry models like ViT-large/-Huge[16] on ImageNet-1K with improved generalization performance. With a vanilla ViT-Huge model, we achieve 87.8% accuracy when fine-tuned on ImageNet-1K. This outperforms all previous previous results that use only ImageNet-1K data. We also evaluate transfer learning on object detection, instance segmentation, and semantic segmentation. In these tasks, our pre-training achieves better results than its supervised pre-training counterparts, and more importantly, we observe significant gains by scaling up models. These observations are aligned with those witnessed in self-supervised pre-training in NLP[14,40,41,4]
 
 
 
@@ -64,3 +64,6 @@ Our MAE learns
 | [14] | BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding | 深度双向Transformers的预训练用于语言理解 | BERT | - 
 | [47]Attention Is All You Need | 注意力机制是你需要的 | Transformer | - 
 | [16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale | 用Transformers做大规模图片识别 | ViT | 2020-10-22
+| [40]Improving Language Understanding by Generative Pre-Training | 使用生成式的预训练方式来提升语言理解 | GPT | - 
+| [41]Language Models are Unsupervised Multitask Learners | 语言模型是无监督多任务的学习器 | GPT-2 | - 
+| [4]Language Models are Few-Shot Learners | 语言模型是小样本学习器 | GPT-3 | 2020-05-28
