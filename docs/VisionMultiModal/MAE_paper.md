@@ -1,8 +1,12 @@
 
 论文名称：Masked Autoencoders Are Scalable Vision Learners
+
 论文地址：https://arxiv.org/abs/2111.06377
+
 readpaper地址：https://readpaper.com/pdf-annotate/note?pdfId=4556957922861522945&noteId=724534621592129536
+
 论文时间：2021.11.11
+
 作者信息：Kaiming He, ..., Ross Girshick 
 
 
@@ -50,8 +54,7 @@ Driven by this analysis, we present a simple, effective, and scalable form of a 
 Our MAE masks random patches from the input image and reconstructs the missing patches in the pixel space. It has an asymmetric encoder-decoder design. Our encoder operates only on the visible subset of patches (without mask tokens), and our decoder is lightweight and reconstructs the input from the latent representation along with mask tokens (Figure 1). Shifting the mask tokens to the small decoder in our asymmetric(不对称的) encoder-decoder results in a large reduction in computation. Under this design, a very high masking ratio (e.g., 75%) can achieve a win-win scenario(双赢的设想):it optimizes accuracy while allowing the encoder to process only a small portion(e.g., 25%) of patches. This can reduce overall pre-training time by 3x or more and likewise(同样的) reduce memory consumption(消耗), enabling us to easily scale our MAE to large models.
 
 
-Our MAE learns very high-capacity that generalize well. With MAE pre-training, we can train data-hungry models like ViT-large/-Huge[16] on ImageNet-1K with improved generalization performance. With a vanilla ViT-Huge model, we achieve 87.8% accuracy when fine-tuned on ImageNet-1K. This outperforms all previous previous results that use only ImageNet-1K data. We also evaluate transfer learning on object detection, instance segmentation, and semantic segmentation. In these tasks, our pre-training achieves better results than its supervised pre-training counterparts, and more importantly, we observe significant gains by scaling up models. These observations are aligned with those witnessed in self-supervised pre-training in NLP[14,40,41,4]
-
+Our MAE learns very high-capacity that generalize well. With MAE pre-training, we can train data-hungry models like ViT-large/-Huge[16] on ImageNet-1K with improved generalization performance. With a vanilla ViT-Huge model, we achieve 87.8% accuracy when fine-tuned on ImageNet-1K. This outperforms all previous previous results that use only ImageNet-1K data. We also evaluate transfer learning on object detection, instance segmentation, and semantic segmentation. In these tasks, our pre-training achieves better results than its supervised pre-training counterparts, and more importantly, we observe significant gains by scaling up models. These observations are aligned with those witnessed in self-supervised pre-training in NLP[14,40,41,4] and we hope that they will enable our field to explore a similar trajectory(轨迹).
 
 
 | 论文名称 | 论文标题翻译 | 论文别名 | 论文时间
@@ -67,3 +70,41 @@ Our MAE learns very high-capacity that generalize well. With MAE pre-training, w
 | [40]Improving Language Understanding by Generative Pre-Training | 使用生成式的预训练方式来提升语言理解 | GPT | - 
 | [41]Language Models are Unsupervised Multitask Learners | 语言模型是无监督多任务的学习器 | GPT-2 | - 
 | [4]Language Models are Few-Shot Learners | 语言模型是小样本学习器 | GPT-3 | 2020-05-28
+
+## 相关工作
+
+**Masked language modeling** and its autoregressive counterparts, e.g., BERT[14] and GPT[40,41,4], are highly successful methods for pre-training in NLP. These methods hold out a portion of the input sequence and train models to predict the missing content. These methods have been shown to scale excellently(非常好地)[4] and a large abundance of evidence indicates that these pre-trained representations generalize well to various downstream tasks.
+
+
+**Autoencoding** is a classical(经典的) method for learning representations. It has encoder that maps an input to a latent representation and a decoder that reconstructs the input. For example, PCA and k-means are autoencoders[25]. Denoising autoencoders (DAE) [48] are a class of autoencoders that corrupt(腐败、败坏) an input signal and learn to reconstruct the original, uncorrupted signal. A series of methods can be thought of as a generalized DAE under different corruptions, e.g., masking pixels[49,39,6] or removing color channels[59]. Our MAE is a form of denosing autoencoding, but different from the classical DAE in numerous ways.
+
+
+**Masked image encoding** methods learn representations from images corrupted by masking. The pioneering work of [49] presents masking as a noise type in DAE. Context Encoder[39] inpaints(修补、修复) large missing regions using convolutional networks. Motivated by the success in NLP, related recent methods[6,16,2] are based on Transformers[47]. iGPT[6] operates on sequences of pixels and predicts unknown pixels. The ViT paper[16] studies masked patch prediction for self-supervised learning. Most recently, BEiT[2] proposes to predict discrete(离散的) tokens[37,43].
+
+
+
+| 论文名称 | 论文标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| [40]Improving Language Understanding by Generative Pre-Training | 使用生成式的预训练方式来提升语言理解 | GPT | - 
+| [41]Language Models are Unsupervised Multitask Learners | 语言模型是无监督多任务的学习器 | GPT-2 | - 
+| [4]Language Models are Few-Shot Learners | 语言模型是小样本学习器 | GPT-3 | 2020-05-28
+| [25]Autoencoders, Minimum Descirption Length and Helmholtz Free Energy | 自动编码器、最小描述长度和Helmholtz自由能 | - | 1993-11-29
+| [48]Extracting and Composing robust features with denoising auto encoders | 使用噪声自编码器的方式提取并组织鲁棒的特征 | - | 2008-07-05
+| [49]Stacked Denoising Autoencoders: Learning Useful Representations in a Deep Network with a Local Denoising Criterion(标准) | 堆叠噪声自编码器：用一个局部的噪声标准去学习深度网络中有用的表征 | - | 2010-12-01
+| [39]Context Encoders: Feature Learning by Inpainting | 上下文编码器：使用修复的方式来做特征学习 | - | 2016-04-25
+| [6] Generative Pretraining From Pixels | 从像素中做生成式的预训练 | iGPT | 2020-07-12
+| [59] Colorful Image Colorization | 彩色图像着色 | - | 2016-03-28
+| [16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale | 用Transformers做大规模图片识别 | ViT | 2020-10-22
+| [2]BEiT: BERT Pre-Training of Image Transformers | 将bert的预训练方式使用到图片transformer中 | BEiT | 2021-06-15
+| [47]Attention Is All You Need | 注意力机制是你需要的 | Transformer | - 
+| [37]Neural Discrete Representation Learning. | 神经的离散表征学习 | VQ-VAE | 2017-11-02
+| [43]Zero-Shot Text-to-Image Generation | 零样本的文本到图片的生成 | - | 2021-02-24
+
+
+
+
+**Self-supervised learning** approaches have been significant interest in computer vision, often focusing on different pretext tasks for pre-training [15,50,35,59,38,17]
+
+
+| 论文名称 | 论文标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
