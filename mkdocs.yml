@@ -60,7 +60,8 @@ nav:
         - 论文全篇翻译: ./VisionMultiModal/paper_translate.md
     - 数据集: ./VisionMultiModal/dataset.md
     - VideoMAE: ./VisionMultiModal/VideoMAE.md
-    - MAE: ./VisionMultiModal/MAE.md
+    - MAE: 
+      - 论文详读: ./VisionMultiModal/MAE_paper.md
   - 系统篇: 
     - Introduction.md
     - 个人简介: cuidonglin.md

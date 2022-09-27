@@ -123,3 +123,4 @@ between two or more views. Contrastive and related methods strongly depend on da
 | [7]A Simple Framework for Contrastive Learning of Visual Representations | 一种视觉表征对比学习的简单框架 | SimCLR | 2020-02-13
 | [20]Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning | 引导你自己的潜力：一种自监督学习的新方法 | T3C | 2020-06-13
 | [8]Exploring Simple Siamese Representation Learning | 探索简单的连体表示学习 | - | 2020-11-20
+
