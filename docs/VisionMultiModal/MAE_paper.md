@@ -40,7 +40,18 @@ The idea of masked autoencoders, a form of more general denoising autoencoders[4
 This architectural gap, however, has been addressed with the introduction of Vision Transformers(ViT)[16] and should no longer present an obstacle(障碍).
 
 
-(ii) Information density(密度) is different between language and vision. Languages are human-generated signals that are highly semantic and information-dense. When training a model to predict only a few missing words per sentence, this task appears to induce(诱导) sophisticated(复杂的) language understanding. Images, on the contrary, are natural signals with heavy spatial redundancy(冗余) - e.g., a missing patch can be recoverted from neighboring patches with little high-level understanding of parts, objects, and scenes. 
+(ii) Information density(密度) is different between language and vision. Languages are human-generated signals that are highly semantic and information-dense. When training a model to predict only a few missing words per sentence, this task appears to induce(诱导) sophisticated(复杂的) language understanding. Images, on the contrary, are natural signals with heavy spatial redundancy(冗余) - e.g., a missing patch can be recoverted from neighboring patches with little high-level understanding of parts, objects, and scenes. To overcome this difference and encourage learning useful features, we show that a simple strategy works well in computer vision: masking a very high portion of random patches. This strategy largely reduces redundancy and creates a chanllenging self-supervisory task that requires holistic(整体的) understanding beyond(超过) low-level image statics. To get a qualitative(定性的) sense of our reconstruction task, see Figures 2 - 4.
+
+
+(iii) The autoencoder's decoder, which maps the latent representation back to the input, plays a different role between reconstructing text and images. In vision, the decoder reconstructs pixels, hence its output is of a lower semantic level than common recognition tasks. This is in contrast to language, where the decoder predicts missing words that contain rich semantic information. While in BERT the decoder can be trival(琐碎的) (an MLP) [14], we found that for images, the decoder design plays a key role in determining the semantic level of the learned latent representations.
+
+
+Driven by this analysis, we present a simple, effective, and scalable form of a masked autoencoder(MAE) for visual representation learning.
+Our MAE masks random patches from the input image and reconstructs the missing patches in the pixel space. It has an asymmetric encoder-decoder design. Our encoder operates only on the visible subset of patches (without mask tokens), and our decoder is lightweight and reconstructs the input from the latent representation along with mask tokens (Figure 1). Shifting the mask tokens to the small decoder in our asymmetric(不对称的) encoder-decoder results in a large reduction in computation. Under this design, a very high masking ratio (e.g., 75%) can achieve a win-win scenario(双赢的设想):it optimizes accuracy while allowing the encoder to process only a small portion(e.g., 25%) of patches. This can reduce overall pre-training time by 3x or more and likewise(同样的) reduce memory consumption(消耗), enabling us to easily scale our MAE to large models.
+
+
+Our MAE learns 
+
 
 
 | 论文名称 | 论文标题翻译 | 论文别名 | 论文时间
