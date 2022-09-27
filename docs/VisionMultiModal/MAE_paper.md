@@ -34,8 +34,12 @@ This appetite(食欲) of data has been successfully addressed in natural languag
 | BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding | 深度双向Transformers的预训练用于语言理解 | BERT | - 
 
 The idea of masked autoencoders, a form of more general denoising autoencoders[48], is natural and applicable(适用的) in computer vision as well. Indeed, closely related research in vision[49,39], preceded(先于) BERT. However, despite significant interest in this idea following the success of BERT, progress of autoencoding methods in vision lags behind NLP. We ask: what makes masked autoencoding different between vision and language? We attempt to answer this question from the following perspectives:
+
+
 (i) Until recently, architectures（架构） were different. In vision, convolutional networks[29] were dominant(占据主导地位的) over the last decade[28]. Convolutions typically operate on regular grids and it is not straightforward to integrate(整合) 'indicators'(指标) such as mask tokens[14] or positional embeddings[47] into convolutional networks.
 This architectural gap, however, has been addressed with the introduction of Vision Transformers(ViT)[16] and should no longer present an obstacle(障碍).
+
+
 (ii) Information density(密度) is different between language and vision. Languages are human-generated signals that are highly semantic and information-dense. When training a model to predict only a few missing words per sentence, this task appears to induce(诱导) sophisticated(复杂的) language understanding. Images, on the contrary, are natural signals with heavy spatial redundancy(冗余) - e.g., a missing patch can be recoverted from neighboring patches with little high-level understanding of parts, objects, and scenes. 
 
 
