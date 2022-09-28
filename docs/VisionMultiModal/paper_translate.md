@@ -212,9 +212,10 @@ We consider two different architectures for the image encoder. For the first, we
 | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale             | transformer用于图片分类 | ViT | Dosovitskiy et al. (2020)
 
 
-The text encoder is a Transformer(Vaswani et al.,2017) with the architecture modifications described in Radford et al.(2019).
+The text encoder is a Transformer(Vaswani et al.,2017) with the architecture modifications described in Radford et al.(2019). As a base size we use a 63M-parameter 12 layer 512-wide model with  8 attention heads. The transformer operates on lower-cased byte pair encoding(BPE) representation of the text with a 49,152 vocab size(Sennrich et al.,2015). 
 
 
 | 论文名称 | 标题翻译 | 论文别名 | 论文时间
 | :------- | :------- | :------ | :--------
 | Attention Is All You Need | 注意力机制是你需要的 | ViT | Vaswani et al.,2017
+| Language Models are Unsupervised Multitask Learners                               | 语言模型是无监督的多任务学习器               | GPT-2 | Radford er al, 2019 
