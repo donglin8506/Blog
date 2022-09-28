@@ -7,6 +7,21 @@
 
 ## 2. Kinetics数据集
 
-下载地址：https://academictorrents.com/details/49f203189fb69ae96fb40a6d0e129949e1dfec98
+数据集简介：
+- 量级: 
+- 分布:
+- 示例:
 
-![图片](./img/kinetics700-download.png "图片")   
+
+数据集下载方法：
+
+https://github.com/cvdfoundation/kinetics-dataset
+
+可以下载Kinetics-400/600/700三个数据集，使用方法简单；
+
+
+视频短边尺寸修改
+
+
+
+## 3. AVA Actions数据集
