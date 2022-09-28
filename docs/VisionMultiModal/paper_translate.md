@@ -152,3 +152,40 @@ Both these approaches share a key similarity. They try to predict the exact word
 图2 **CLIP is much more efficient at zero-shot transfer than our image caption baseline.** Althougn highly expressive(富有表现力), we found that transformer-based language models are relatively weak at zero-shot ImageNet classification. Here, we see that it learns 3x slower than a baseline which predicts a bag-of-words(BoW) encoding of the text(Joulin et al., 2016). Swapping the prediction objective for the contrastive objective of CLIP further improves efficiency another 4x.
 
 
+Given a batch of N(image, text)pairs, CLIP is trained to predict which of the NxN possible(image, text) pairings across a batch actually occurred. To do this, CLIP learns a multi-modal embedding space by jointly training an image encoder and text encoder to maximize the cosine similarity of the image and text embeddings of the N real pairs in the batch while minimizeing the cosine similarity of the embeddings of the N^2 - N incorrect pairings. We optimize a symmetric cross entropy loss over these similarity scores. In figure 3, we include pseudocode of the core of an implementation of CLIP. To our knowledge this batch construction technique and objectives was first introduced in area of deep metric learning as the multi-class N-pair loss Sohn(2016) was popularized for contrastive representation learning by Oord et al.(2018) as the InfoNCE loss, 
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Improved deep metric learning with multi-class N-pair loss objective | 使用多分类的多对的损失函数来提升深度评估学习能力 | - 2016-12-05
+
+
+
+```python
+# image_encoder - ResNet of Vision Transformer
+# text_encoder  - CBOW or Text Transformer
+# I[n, h, w, c] - minibatch of aligned images
+# T[n, l]       - minibatch of aligned texts
+# W_i[d_i, d_e] - learned proj of image to embed
+# W_t[d_t, d_e] - learned proj of text to embed
+# t             - learned temperature parameter
+
+# extract feature representations of each modality
+I_f = image_encoder(I) # [n, d_i]
+T_f = text_encoder(T)  # [n, d_t]
+
+# joint multimodal embedding [n, d_e]
+I_e = l2_normalize(np.dot(I_f, W_i), axis=1)
+T_e = l2_normalize(np.dot(T_f, W_t), axis=1)
+
+# scaled pairwise cosine similarities [n, n]
+logits = np.dot(I_e, T_e.T) * np.exp(t)
+
+# symmetric loss function
+labels = np.arange(n)
+loss_i = cross_entropy_loss(logits, labels, axis=0)
+loss_t = cross_entropy_loss(logits, labels, axis=1)
+loss = (loss_i + loss_t) / 2
+```
+
+图3 Numpy-like pseudocode for the core of an implementation of CLIP
