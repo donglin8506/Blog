@@ -152,12 +152,14 @@ Both these approaches share a key similarity. They try to predict the exact word
 图2 **CLIP is much more efficient at zero-shot transfer than our image caption baseline.** Althougn highly expressive(富有表现力), we found that transformer-based language models are relatively weak at zero-shot ImageNet classification. Here, we see that it learns 3x slower than a baseline which predicts a bag-of-words(BoW) encoding of the text(Joulin et al., 2016). Swapping the prediction objective for the contrastive objective of CLIP further improves efficiency another 4x.
 
 
-Given a batch of N(image, text)pairs, CLIP is trained to predict which of the NxN possible(image, text) pairings across a batch actually occurred. To do this, CLIP learns a multi-modal embedding space by jointly training an image encoder and text encoder to maximize the cosine similarity of the image and text embeddings of the N real pairs in the batch while minimizeing the cosine similarity of the embeddings of the N^2 - N incorrect pairings. We optimize a symmetric cross entropy loss over these similarity scores. In figure 3, we include pseudocode of the core of an implementation of CLIP. To our knowledge this batch construction technique and objectives was first introduced in area of deep metric learning as the multi-class N-pair loss Sohn(2016) was popularized for contrastive representation learning by Oord et al.(2018) as the InfoNCE loss, 
+Given a batch of N(image, text)pairs, CLIP is trained to predict which of the NxN possible(image, text) pairings across a batch actually occurred. To do this, CLIP learns a multi-modal embedding space by jointly training an image encoder and text encoder to maximize the cosine similarity of the image and text embeddings of the N real pairs in the batch while minimizeing the cosine similarity of the embeddings of the N^2 - N incorrect pairings. We optimize a symmetric cross entropy loss over these similarity scores. In figure 3, we include pseudocode of the core of an implementation of CLIP. To our knowledge this batch construction technique and objectives was first introduced in area of deep metric learning as the multi-class N-pair loss Sohn(2016) was popularized for contrastive representation learning by Oord et al.(2018) as the InfoNCE loss, and was recently adapted for contrastive(text, image) representation learning in the domain of medical imaging by Zhang et al.(2020).
 
 
 | 论文名称 | 标题翻译 | 论文别名 | 论文时间
 | :------- | :------- | :------ | :--------
 | Improved deep metric learning with multi-class N-pair loss objective | 使用多分类的多对的损失函数来提升深度评估学习能力 | - 2016-12-05
+| Representation Learning with Contrastive Predictive Coding | 使用对比预测编码来进行表征学习 | CPC |  Oord et al.(2018)
+| Contrastive Learning of Medical Visual Representations form Paired Images and Text | 使用成对的图片文本进行对比学习，用于医疗视觉表征 | Zhang et al.(2020)
 
 
 
@@ -189,3 +191,30 @@ loss = (loss_i + loss_t) / 2
 ```
 
 图3 Numpy-like pseudocode for the core of an implementation of CLIP
+
+
+Due to the large size of our pre-training dataset, over-fitting is not a major concern and the details of training CLIP are simplified compared to the implementation of Zhang et al.(2020). We train CLIP form scratch without initiallizeing the image encoder with ImageNet weights or the text encoder with pre-trained weights. We do not use the non-linear projection between the representation and the contrastive embedding space, a change which was introduced by Bachman et al.(2019) and popularized by Chen et al.(2020b). We instead use only a linear projection to map from each encoder's representation to the multi-mosal embedding space. We did not notice a difference in training two versions and speculate(推测) that non-linear projections may be co-adapted with details of current image only in self-supervised representation learning methods. We also remove the text transformation function `{t_u}` from Zhang et al.(2020) which samples a single sentence at uniform from the text since many of the (image, text) pairs in CLIP's pre-training dataset are only a single sentence. We also simplify the image transformation function $t_v$. A random square crop from resized images is the only data augmentation used during training. Finally, the temperature parameter which controls the range of the logits in the softmax, $\tau$, is directly optimized during training as a log-parameterized multiplicative scalar to avoid turning as a hyper-parameter.
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Contrastive Learning of Medical Visual Representations form Paired Images and Text | 使用成对的图片文本进行对比学习，用于医疗视觉表征 | Zhang et al.(2020)
+| A Simple Framework for Contrastive Learning of Visual Representations | 一个简单的框架用于视觉表征的对比学习 | SimCLR | Chen et al.(2020b)
+
+
+#### Choosing and Scaling a Model
+
+We consider two different architectures for the image encoder. For the first, we use ResNet-50 as the base architecture for the image encoder due to its widespread adoption and proven performance. We make several modifications to the original version using the ResNet-D improvements from He et al.(2019) and the antialiased(抗锯齿) rect-2 blur(模糊) pooling from Zhang(2019). We also replace the global average pooling layer with an attention pooling mechanism. The attention pooling is implemented as a single layer of "transformer-style" multi-head QKV attention where the query is conditioned on the global average-pooled representation of the image. For the second architecture, we experiment with the recently introduced Vision Transformer(ViT)(Dosovitskiy et al.,2020). We closely follow their implementation with only the minor modification of adding an additional layer normalization to the combined patch and position embeddings before the transformer and use a slightly different initialization scheme(方案).
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Bag of Tricks from Image Classification with Convolutional Neural Networks | 用卷积神经网络做图片分类的一堆技巧 | - | He et al.(2019)
+| Making Convolutional Networks Shift-Invariant Again | 使卷积神经网络更加尺度不变 | - | Zhang(2019)
+| An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale             | transformer用于图片分类 | ViT | Dosovitskiy et al. (2020)
+
+
+The text encoder is a Transformer(Vaswani et al.,2017) with the architecture modifications described in Radford et al.(2019).
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Attention Is All You Need | 注意力机制是你需要的 | ViT | Vaswani et al.,2017
