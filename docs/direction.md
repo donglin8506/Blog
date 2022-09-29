@@ -8,7 +8,7 @@
 | 自监督表征预训练方向 | - | Deit / MoCo v3/DINO/BEiT/MAE/CAE | 
 | 异构模型蒸馏 | 将transformer大模型学到的内容蒸馏到CNN模型上 | 
 | 面向芯片的网络结构搜索 | - | GP-NAS/OFA | 针对芯片定制化，高效产出最优的模型结构 
-
+| 
 
 人脸活体、OCR、
 
