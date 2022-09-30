@@ -57,7 +57,7 @@ nav:
     - 论文阅读: 
       - CLIP:
         - 论文拆解: ./VisionMultiModal/paper_converge.md
-        - 论文全篇翻译: ./VisionMultiModal/paper_translate.md
+        - 论文全篇翻译: ./VisionMultiModal/CLIP.md
     - 数据集: ./VisionMultiModal/dataset.md
     - VideoMAE: ./VisionMultiModal/VideoMAE.md
     - MAE: 
