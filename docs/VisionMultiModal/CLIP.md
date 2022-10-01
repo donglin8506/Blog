@@ -219,3 +219,29 @@ The text encoder is a Transformer(Vaswani et al.,2017) with the architecture mod
 | :------- | :------- | :------ | :--------
 | Attention Is All You Need | 注意力机制是你需要的 | ViT | Vaswani et al.,2017
 | Language Models are Unsupervised Multitask Learners                               | 语言模型是无监督的多任务学习器               | GPT-2 | Radford er al, 2019 
+
+While previous computer vision research has often scaled models by increasing the width(Mahajan et al., 2018) or depth(He et al., 2016a) in isolation(隔离的，单独的), for the ResNet image encoders we adapt the approach of Tan & Le(2019) which found that allocating(分配) additional compute across all of width, depth, and resolution outperforms only allocating(分配) it to only one dimension of the model. While Tan & Le(2019) tune the ratio of compute allocated to each dimension for their EfficientNet architecture, we use a simple baseline of allocating additional compute equally to increasing the width, depth, and resolution of the model. For the text encoder, we only scale the width of the model to be proportional(成比例的) to the calculated increase in width of the ResNet and do not scale the depth at all, as we found CLIP's performance to be less sensitive to the capacity of the text encoder.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Exploring the Limits of Weakly Supervised Pretraining                                  | 探索弱监督预训练的限制 | - | Mahajan et al.(2018)
+| Deep Residual Learning for Image Recognition | 使用深度残差网络来做视频分类任务 | ResNet | He et al., 2016a
+| EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks | EfficientNet: 重新思考卷积神经网络模型扩展问题 | EfficientNet | Tan & Le(2019) 
+
+#### 2.5 Training 
+
+We train a series of 5 ResNets and 3 Vision Transformers. For the ResNets we train a ResNet-50, a ResNet-101, and then 3 more which follow EfficientNet-style model scaling and use approximately 4x, 16x, 64x the compute of a ResNet-50. They are denoted as RN50x4, RN50x16, and RN50x64 respectively. For the Vision Transformers we train a ViT-B/32, a ViT-B/16, and a ViT-L/14.  We train all models for 32 epochs. We use the Adam optimizer(Kingma & Ba, 2014) with decoupled(解耦的) weight decay regularization (Loshchilov & Hutter, 2017) applied to all weights that are not gains or biases, and decay the learning rate unsing a cosine schedule(Loshchilov & Hutter, 2016). Initial hyper-parameters were set using a comnination of grid searches, random search, and manual tuning on the baseline ResNet-50 model when trained for 1 epoach. Hyper-parameters were then adapted heuristically(启发式的) for larger models due to computational constraints. The learnable temperature parameter $\tau$ was initialized to the equivalent of 0.07 from (Wu et al., 2018). and clipped(剪切) to prevent scaling the logits by more than 100 which we found necessary to prevent(防止) training instability（不稳定）. We use a very large minibatch size of 32,768. Mixed-precision(Micikevicius et al., 2017) was used to accelerate training and save memory. To save additional memory, gradient checkpointing(梯度检查点) (Griewank & Walther, 2000; Chen et al.,2016), half-precision Adam statistics(Dhariwal et al.,2020), and half-precision stochastically rounded(半精度随机四舍五入的) text encoder weights were used. The calculation(计算) of embedding similarities was also sharded with individual GPUs computing only the subset of the pairwise similarities necessary for their local batch of embeddings. The largest ResNet model, RN50x64, took 18 days to train on 592 V100 GPUs while the largest Vision Transformer took 12 days on 256 V100 GPUs. For the ViT-L/14 we also pre-train at a higher 336 pixel resolution for one additional epoch to boost performance similar to FixRes(Touvron et al.,2019). We denote this model as ViT-L/14@336px. Unless otherwise specified(除非另有规定), all results reported in this as "CLIP" use this model which we found to perform best.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Adam: A Method for Stochastic(随机) Optimization | 随机优化的一种方法 | Adam | Kingma & Ba, 2014
+| Decoupled Weight Decay Regularization | 解耦的权重衰减正则化 | - | Loshchilov & Hutter, 2017
+| SGDR: Stochastic Gradient Descent with Warm Restarts | 使用热启动的方式和随机梯度下降相结合 | SGDR | Loshchilov & Hutter, 2016
+| Unsupervised Feature Learning via Non-Parametric Instance-level Discrimination | 通过无参数实例级别判别的无监督特征学习 | - | Wu et al., 2018
+| Mixed Precision Training | 混合精度训练 | - | Micikevicius et al., 2017
+| Algorithm 799: revolve: an implementation of checkpointing for the reverse or adjoint mode of cumputational differentiation | 计算微分的反向或伴随模式的检查点实现 | - | Griewank & Walther, 2000
+| Training Deep Nets with Sublinear Memory Cost. | 使用次线性内存成本训练深度网络 | - | Chen et al.,2016
+| Jukebox: A Generative Model for Music | 用于音乐的一个生成式模型 | - | Dhariwal et al.,2020
+| Fixing the train-test resolution dicrepancy | 修复训练-测试分辨率差异 | - | Touvron et al.,2019
