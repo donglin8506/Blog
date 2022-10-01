@@ -255,7 +255,96 @@ We train a series of 5 ResNets and 3 Vision Transformers. For the ResNets we tra
 
 ###### 3.1.1 Motivation
 
-In computer vision, zero-shot learning usually refers to the study of generalizing to unseen object categories in image classification(Lampert et al.,2009).
+In computer vision, zero-shot learning usually refers to the study of generalizing to unseen object categories in image classification(Lampert et al.,2009). We instead use the term in a broader sense and study generalization to unseen datasets. We motivate this as a proxy for performing unseen tasks, as aspired to in the zero-data learning paper of Larochelle et al.(2008). While much research in the filed of unsupervised learning focuses on the representation learning capabilities of machine learning systems, we motivate studying zero-shot transfer as a way of measuring the task-learning capabilities of machine learning systems. In this view, a dataset evaluates performance on a task on a specific distribution. However, many popular computer vision datasets were created by the research community primarily as benchmarks to guide the development of generic image classification methods rather than measuring performance on a specific task. While it is reasonable to say that(可以这么说) the SVHN dataset measures the task of street number transciption on the distribution of Google Street View photos, it is unclear what "real" task the CIFAR-10 dataset measures. It is clear, however, what distribution CIFAR-10 is drawn from - TinyImages(Torralba et al.,2008). On these kinds of datasets, zero-shot transfer is more an evaluation of CLIP's robustness to distribution shift and domain generalization rather tahn task generalization. Please Section 3.3 for analysis focused on this.
 
 | 论文名称 | 标题翻译 | 论文别名 | 论文时间
 | :------- | :------- | :------ | :--------
+| Learning To Detect Unseen Object Classes by Between-Class Attribute Transfer | 通过类之间属性迁移，来学会检测没见过的物体类别 | - | Lampert et al.,2009
+| Zero-data learning of new tasks | 新任务的零样本学习 | - | Larochelle et al.(2008)
+
+To our knowledge, Visual N-Grams(Li et al.,2017) first studied zero-shot transfer to existing image classification datasets in the manner described above. It is also the only other work we are aware of that has studied zero-shot transfer to standard image classification datasets using a generically pre-trained model and serves as(充当) the best reference point for contextualizing CLIP. Their approach learns the parameters of a dictionary of 142806 visual n-grams(spaning 1- to 5- grams) and optimizes these n-grams using a differential version of Jelinek-Mercer smoothing to maximize the probability of all text n-grams for a given image. In order to perform zero-shot transfer, they first convert the text of each of the dataset's class names into its n-gram representation and then compute its probability according to their model, predicting the one with the highest score.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Learning Visual N-Grams from Web Data | 从网页数据中学习视觉N-Grams | - | Li et al.,2017
+
+插入一点内容
+
+Learning Visual N-Grams from Web Data
+
+Real-world image recognition systems need to recognize tens of thousands of classes that constitute(构成) a plethora of (许多的) visual concepts. The traditional approach of annotating thousands of images per class for training is infeasible(不可行的) in such a scenario(这种情况下), prompting the use of webly supervised data. This paper explores the training of image-recognition systems on large numbers of images and associated user comments. In particular, we develop visual n-gram models that can predict arbitrary phrases that are relevant to the content of an image. Our visual n-gram models are feed-forward convolutional networks trained using new loss functions that are inspired by n-gram models commonly used in language modeling. We demonstrate the merits of our models in phrase prediction, phrase-based image retrieval, relating images and captions, and zero-shot transfer.
+
+
+Our focus on studying zero-shot transfer as an evaluation of task learning is inspired by work demonstrating task learning in the field of NLP. To our knowledge Liu et al.(2018) first identified task learning as an "unexpected side-effect"(不期望的副作用) when a language model trained to generate Wikipedia articles learned to reliably transliterate(音译) names between languages. While GPT-1(Radford et al.,2018) focused on pre-training as a transfer learning method to improve supervised fine-tuning, , it also included an ablation study demonstrating that the performance of four heuristic(启发式的) zero-shot transfer methods improved steadily over the course of pre-training(在预训练过程中稳定地改善), without any supervised adaption. This analysis served as the basis for GPT-2(Radford et al.,2019) which focused exclusively(仅) on studying the task-learning capabilities of language models via zero-shot transfer.
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Generating Wikipedia by Summarizing Long Sequences | 通过归总长序列来生成wiki | - | Liu et al.(2018) 
+
+###### 3.1.2 Using CLIP for Zero-shot Transfer
+
+CLIP is pre-trained to predict if an image and a text snippet(片段) are paired together in its dataset. To perform zero-shot classification, we reuse this capability. For each dataset, we use the names of all the classes in the dataset as the set of potential text pairings and predict the most probable(可能的)(image, text) pair according to CLIP. In a bit more detail, we first compute the feature embedding of the image and the feature embedding of the set of possible texts by their respective(各自的) encoders. The cosine similarity of these embeddings is then calculated, scaled by a temperature parameter $\tau$, and normalized into a probability distribution via a softmax. Note that this prediction layer is a multinormial(多项的) logistic regression classifier with L2-normalized inputs, L2-normalized weights, no bias, and temperature scaling. When interpreted this way, the image encoder is the computer vision backbone which computes a feature representation for the image and the text encoder is a hypernetwork(Ha et al.,2016) which generates the weights of a linear classifier based on the text specifying the visual concepts that the classes represent. Lei Ba et al.(2015) first introduced a zero-shot image classifier of this form while the idea of generating a classifier from natual language dates back to at least Elhoseiny et al.(2013). Continuing with this interpretation, every step of CLIP pre-training can be viewed as optimizeing the performance of a randomly created proxy to a computer vision dataset which contains 1 example per class and has 32768 total classes defined via natural language descriptions. For zero-shot evaluation, we cache the zero-shot classifier once it has been computed by the text encoder and reuse it for all subsequent predictions. This allows the cost(成本) of generating it to be amortized(分摊) across all the predictions in a dataset.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| HyperNetworks | 超网络 | - | Ha et al.,2016
+| Predicting Deep Zero-Shot Convolutional Neural Networks using Textual Descriptions | 使用文本性的描述来预测深度零样本卷积网络 | - | Lei Ba et al.(2015)
+| Write a Classifier: Zero-Shot Learning Using Purely Textual Descriptions | 使用纯文本描述来做零样本学习 | - | Elhoseiny et al.(2013)
+
+###### 3.1.3 Initial Comparison to Visual N-Grams
+
+In Table 1 we compare Visual N-Grams to CLIP. The best CLIP model improves accuracy on ImageNet from a proof of concept 11.5% to 76.2% and matches the performance of the original ResNet-50 despite using none of the 1.28 million crowd-labeled training examples available for this dataset. Additionally, the top-5 accuracy of CLIP models are noticeably higher than their top-1, and this model has a 95% top-5 accuracy, matching Inception-V4(Szegedy et al.,2016). The ability to match the performance of a strong, fully supervised baselines in a zero-shot setting suggests CLIP is a significant step towards flexible and practical zero-shot computer vision classifiers. As mentioned above, the comparison to Visual N-Grams is meant for contextualizing the performance of CLIP and should not be interpreted as a direct methods comparison between CLIP and Visual N-Grams as many performance relevant differences between the two systems were not controlled for. For instance, we train on a dataset that is 10x larger, use a vision model that requires nearly 100x more compute per prediction, likely used over 1000x their training compute, and use a transformer-based model which did not exist when Visual N-Grams was published. As a closer comparison, we trained a CLIP ResNet-50 on the same YFCC100M dataset that Visual N-Grams was trained on and found it matched their reported ImageNet performance within a V100 GPU day. This baseline was also trained from scatch instead of being initiallized from pre-trained ImageNet weights as in Visual N-Grams.
+
+
+
+| -              | aYahoo | ImageNet | SUN
+| :------------- | :----- | :------- | :----
+| Visual N-Grams | 72.4   | 11.5     | 23.0
+| CLIP           | 98.4   | 76.2     | 58.5
+
+Table 1. Comparing CLIP to prior zero-shot transfer image classification results. CLIP improves performance on all three datasets by a large amount. This improvement reflects(反映了) many differences in the 4 years since the development of Visual N-Grams(Li et al.,2017).
+
+CLIP also outperforms Visual N-Grams on the other 2 reported datasets. On a Yahoo, CLIP achieves a 95% reduction(减少) in the number of errors, and on SUN, CLIP more than doubles the accuracy of Visual N-Grams. To conduct a more comprehensive analysis and stress test, we implement a much larger evaluation suite detailed in Appendix A. In total we expand from the 3 datasets reported in Visual N-Grams to include over 30 datasets and compare to over 50 existing computer vision systems to contextualize results.
+
+###### 3.1.4 Prompt Engineering And Ensembling
+
+Most standard image classification datasets treat the information naming or describing classes which enables narural language based(基于自然语言) zero-shot transfer as an afterthought(事后想法). The vast majority of datasets annotate images with just a numeric id of the label and contain a file mapping these ids back to their names in English. Some datasets, such as Flowers102 and GTSRB, don't appear to include this mapping at all in their released versions preventing(防止) zero-shot transfer entirely. For many datasets, we observed these labels may be chosen somewhat(有些) haphazardly(随意) and do not anticipate(预测) issues related to zero-shot transfer which relies on task description in order to transfer successfully.
+
+
+A common issue is polysemy(歧义性). When the name of a class is the only information provided to CLIP's text encoder it is unable to differentiate which word sense is meant due to the lack of context. In some cases multiple meanings of the same word might be included as different classes in the same dataset! This happens in ImageNet which contains both construction cranes(建筑起重机) and cranes that fly.(飞的鹤). Another example is found in classes of the Oxford-IIIT Pet dataset where the word boxer(拳师犬、拳击手) is, from context, clearly referring to a breed of dog, but to a text encoder lacking context could just as likely refer to a type of athlete(运动员).
+
+
+Another issue we encountered is that it's relatively rare in our pre-training dataset for the text paired with the image to be just a single word. Usually the text is a full sentence describing the image in some way. To help bridge this distribution gap, we found that using the prompt template "A photo of a {label}." to be a good default that helps the text is about the content of the image. This often improves performance over the baseline of using only the label text. For instance, just using this prompt improves accuracy on ImageNet by 1.3%.
+
+Similar to the "prompt engineering" discussion around GPT-3(Brown et al.,2020; Gao et al.,2020), we have also observed that zero-shot performance can be significantly improved by customizing(定制) the prompt text to each task. A few, non exhaustive, examples follow(以下是一些非详尽的示例). We found that on several fine-grained image classification datasets that it helped to specify(指定) the category. For example on Oxford-IIIT Pets, using "A photo of a {label}, a type of pet." to help provide context worked well. Likewise, on Food101 specifying a type of food and on FGVC Aircraft a type of aircraft helped too. For OCR datasets, we found that putting quotes(引号)around the text or number to be recognized improved performance. Finally, we found that on satellite image classification datasets it helped to specify that the images were of this form and we use variants of "a satellite phot of a {label}."
+
+We also experimented with ensembling over multiple zero-shot classifiers as another way of improving performance.These classifiers are computed by using different context prompts such as "A photo of a big {label}" and "A photo of a small {label}". We construct the ensemble over the embedding space instead of probability space. This allows us to cache a single set of averaged text embeddings so that the compute cost of the emsemble is the same as using a single classifier when amortized(分摊) over many predictions. We've observed ensembling across many generated zero-shot classifiers to reliably improve performance and use it for the majority of datasets. On ImageNet, we ensemble 80 different context prompts and this improves performance by an additional 3.5% over the single default prompt discussed above. When considerd together, prompt engineering and ensembling improve ImageNet accuracy by almost 5%. In Figure 4 we visualize how prompt engineering and ensembling change the performance of a set of CLIP models compared to the contextless baseline approach of directly embedding the class name as done in Li et al.(2017).
+
+Figure4. Prompt engineering and ensembling improve zero-shot performance, Compared to the baseline of using contextless class names, prompt engineering and ensembling boost zero-shot classification performance by almost 5 points on average across 36 datasets. This improvement is similar to the gain from using 4 times more compute with the baseline zero-shot method but is "free" when amortized over many predictions.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Language Models are Few-Shot Learners                                             | 语言模型是小样本学习器                      | GPT-3 | Brown et al., 2020
+| Making Pre-trained Language Models Better Few-shot Learners. | 使预训练语言模型比少样本学习器更好 | - | Gao et al.,2020
+
+
+###### 3.1.5 Analysis of Zero-shot CLIP Performance
+
+Since task-agnostic zero-shot classifiers for computer vision have been understudied, CLIP provides a promising opportunity to gain a better understanding of this type of model. In this section, we conduct a study of various properties of CLIP's zero-shot classifiers. As a first question, we look simply at how well zero-shot classifiers perform. To contextualize this, we compare to the performance of a simple off-the-shelf(现成的) baseline: fitting a fully supervised, regularized, logistic regression classifier on the features of the canonical(经典的) ResNet-50. In Figure 5 we show this comparison across 27 datasets. Please see Apprendix A for details of datasets and setup.
+
+
+
+Figure 5. Zero-shot CLIP is competitive with a fully supervised baseline. Across a 27 dataset eval suite, a zero-shot CLIP classifier outperforms a fully supervised linear classifier fitted on ResNet-50 features on 16 datasets, including ImageNet.
+
+
+Zero-shot CLIP outperforms this baseline slightly more often than not and wins on 16 of the 27 datasets. Looking at individual datasets reveals(揭示了) some interesting behavior. On fine-grained classification tasks, we observe a wide spread in performance. On two of these datasets, Stanford Cars and Food101, zero-shot CLIP outperforms logistic regression on ResNet-50 features by over 20% while on two others, Flowers102 and FGVCAircraft, zero-shot CLIP underperforms by over 10%. On OxfordPets and Birdsnap, performance is much closer. We suspect these difference are primarily due to varying amounts of per-task supervision between WIT and ImageNet. On "general" object classification datasets such as ImageNet, CIFAR10/100,STL10, and PascalVOC2007 performance is relatively similar with a slight advantage for zero-shot CLIP in all cases. On STL10, CLIP achieves 99.3% overall which appears to be a new state of the art despite not using any training examples. Zero-shot CLIP significantly outperforms a ResNet-50 on two datasets measuting action recognition in videos. On Kinetics700, CLIP outperforma a ResNet-50 by 14.5%. Zero-shot CLIP also outperforms a ResNet-50's features by 7.7% on UCF1010. We speculate this is due to natural language providing wider supervision for visual concepts involving verbs, compared to the noun-centric object supervision in ImageNet.
+
+Looking at where zero-shot CLIP notably(尤其) underperforms, we see that zero-shot CLIP is quite weak on several specialized, complex, or abstract tasks such as satellite image classification (EuroSAT and RESISC45), lymph node tumor detection (PatchCamelyon), counting objects in synthetic scenes(CLEVRCounts), self-driving related tasks such as German traffic sign recognition(GTSRB), recognizing distance to the nearest car (KITTI Distance). These results highlight the poor capability of zero-shot CLIP on more complex tasks. By contrast, non-expert humans can robustly perform several of these tasks, such as counting, satellite image classification, and traffic sign recognition, suggesting significant room for improvement. However, we caution(警告) that it is unclear whether measuring zero-shot transfer, as opposed to few-shot transfer, is a meaningful evaluation for difficult tasks that a learner has no prior experience with, such as lymph node tumor classification for almost all humans(and possibly CLIP).
+
+While comparing zero-shot performance to fully supervised models contextualizes the task-learning capabilities of CLIP, comparing to few-shot methods if a more direct comparison, since zero-shot is its limit. In Figure 6, 
+
+
+Figure 6. Zero-shot CLIP outperforms few-shot linear probes. Zero-shot CLIP matches the average performance of a 4-shot linear classifier trained on the same feature space and nearly matches the best results of a 16-shot linear across classifier publicly available models. For both BiT-M and SimCLRv2, the best performing model is highlighted. Light gray lines are other models in the eval suite. The 20 datasets with at least 16 examples per class were used in this analysis. 
