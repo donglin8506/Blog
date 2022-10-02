@@ -376,8 +376,32 @@ Figure 8. Zero-shot performance is correlated with linear probe performance but 
 
 There is a positive correlation of 0.82 (p-value < 10^-6) between zero-shot performance and fully supervised performance, suggesting that CLIP is relatively(相当地) consistent(一致的) at connecting underlying(根本的、潜在的) representation and task learning to zero-shot transfer. However, zero-shot CLIP only approaches(接近) fully supervised performance on 5 datasets: STL10, CIFAR10, Food101, OxfordPets, and Caltech101. On all 5 datasets, both zero-shot accuracy and fully supervised accuracy are over 90%. This suggests that CLIP may be more effective at zero-shot transfer for tasks where its underlying representations are also high quality. The slope of a linear regression model predicting zero-shot performance as a function of fully supervised performance, zero-shot performance improves by 1.28%. However, the 95th-percentile confidence intervals still include values of less than 1(0.93-1.79).
 
-Over the past few years, empirical studies of deep learning systems have documented that performance is predictable as a function of important quantities such as training compute and dataset size()
+Over the past few years, empirical studies of deep learning systems have documented that performance is predictable as a function of important quantities such as training compute and dataset size(Hestness et al., 2017; Kaplan et al.,2020). The GPT family of models has so far demonstrated consistent improvements in zero-shot performance across a 1000x increase in training compute. In Figure 9, we check whether the zero-shot performance of CLIP follows a similar scaling pattern. We plot the average error rate of the 5 ResNet CLIP models across 39 evaluations on 36 different datastes and find that a similar log-log linear scaling trend holds for CLIP across a 44x increase in model compute. While the overall trend is smooth, we found that performance on individual evaluations can be much noisier. We are unsure whether this is caused by high variance between individual training runs sub-tasks(as documented in D'Amour et al.(2020)) masking a steadily improving trend or whether performance is actually non-monotonic(非单调的) as a function of compute on some tasks.
 
 
 | 论文名称 | 标题翻译 | 论文别名 | 论文时间
 | :------- | :------- | :------ | :--------
+| Deep Learning Scaling is Predictable, Empirically | 深度学习模型的扩展性是可以预测的 | - | 
+| Scaling Laws for Neural Language Models | 深度语言模型的扩展性规则
+
+Figure 9. Zero-shot CLIP performance scales smoothly as a function of model compute. Across 39 evals on 36 different datasets, average zero-shot error is well modeled by a log-log linear trend across a 44x range of compute spanning 5 different CLIP models. Lightly shaded lines are performance on individual evals, showing that performance is much more varied despite the smooth overall trend.
+
+
+## 3.2 Representation Learning
+
+While we have extensively(广泛地) analyzed the task-learning capabilities of CLIP through zero-shot transfer in the pervious section, it is more common to study the representation learning capabilities of a model. There exist many ways to evaluate the quality of representations as well as disagreements(分歧) over what properties an "ideal" representation should have (Locatello et al.,2020). Fitting a linear classifier on a representation extracted from the model and measuring its performance on various datasets is a common approach. An alternative is measuring the performance of end-to-end fine-tuning of the model. This increases flexibility(灵活性), and prior work has convincingly demonstrated that fine-tuning outperforms linear classification on most image classification datasets(Kornblith et al.,2019;Zhai et al.,2019). While the high performance of fine-tuning motivates its study for practical reasons, we still opt for linear classifier based evaluation for several reasons. Our work is focused on developing a high-performing task and dataset-agnostic pre-training approach. Fine-tuning, because it adapts(适应、应用) representations to each dataset during the fine-tuning phase, can compensate for(补偿) and potentially mask failures to learn general and robust representations during the pre-training phase. Linear classifiers, because of their limited flexibility, instead hightlight these failures and provide clear feedback during development. For CLIP, training supervised linear classifier has the added benefit of being very similar to the approach used for its zero-shot classifiers which enables extensive comparisons and analysis in Section 3.1. Finally, we aim to compare CLIP to a comprehensive(综合的) set of existing models across many tasks. Studying 66 diferent models on 27 different datasets requires tuning 1782 different evaluations. Fine-tuning opens up a much larger design and hyper-parameter space, which makes it difficult to fairly evaluate and computationally expensive to compare a diverse set of techniques as discussed in other large scale empirical studies(Lucic et al.,2018; Choi et al.,2019). By comparison, linear classifiers require minimal hyper-parameter tuning and have standardized implementations and evaluation procedures. Please see Appendix A for further details on evaluation.
+
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| A Sober look at the Unsupervised Learning of Disentangled Representations and their Evaluation | 清醒地看待解开表征的无监督学习和他们的评估 | - | Locatello et al.,2020
+| Do Better ImageNet Models Transfer Better? | - | - | Kornblith et al.,2019
+| A Large-scale Study of Representation Learning with the Visual Task Adaptation Benchmark | - | - | Zhai et al.,2019
+| Are GANs Created Equal? A Large-Scale Study | - | - | Lucic et al.,2018
+| On Empirical Comparisons of Optimizers for Deep Learning | 用于深度学习的优化器的经验性比较 | - | Choi et al.,2019
+
+
+Figure 10 summarizes our findings. 
+
+
