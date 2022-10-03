@@ -195,3 +195,6 @@ Simple algorithms that scale well are the core of deep learning. In NLP, simple 
 | [24]Deep Residual Learning for Image Recognition | 使用残差学习来做图片分类 | ResNet | 2015-12-10
 | [16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale | 用Transformers做大规模图片识别 | ViT | 2020-10-22
 
+
+On the other hand, we note that images and languages are signals of a different nature and this difference must be addressed carefully. Images are merely(仅仅) recorded light(光) without a semantic decomposition into the visual analogue of words. Instead of attempting to remove objects, we remove random patches that most likely do not form a semantic segment. Likewise, our MAE reconstructs pixels, which are not semantic entities. Nevertheless, we observe (e.g., Figure 4) that our MAE infers complex, holistic(整体的) reconstructions, suggesting it has learned numerous(很多的) visual concepts, i.e. semantics. We hypothesize that this behavior occurs by way of a rich hidden representation inside the MAE. We hope this perspective will inspire(启发) future work.
+
