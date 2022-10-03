@@ -60,6 +60,47 @@ Attention mechanisms have become an integral(不可缺少的) part of compelling
 
 In this work we propose the Transformer, a model architecture eschewing(避免) recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.
 
+
+## 背景
+
+The goal of reducing sequential computation also forms the foundation of the Extended Neural GPU[16], ByteNet[18] and ConvS2S[9], all of which use convolutional neural networks as basic building block, computing hidden representations in parallel for all input and output positioins. In these models, the number of operations required to relate signals from two arbitrary input or output positions grows in the distance between positions, linearly for ConvS2S and logarithmically for ByteNet. This makes it more difficult to learn dependencies between distant(遥远的) positions[12]. In the Transformer this is reduced to a constant number of operations, albeit(尽管) at the cost of reduced effective resolution due to averaging attention-weighted positions, an effect we counteract with Multi-Head Attention as described in section 3.2
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [16] Can active memory replace attention? | - | 2016
+| [18] Neural Machine Translation in Linear Time | - | 2016-10-31
+| [9] Convolutional Sequence to Sequence Learning | - | 2017-05-08
+| [12] Gradient Flow in Recurrent Nets: the Difficulty of Learning Long-Term Dependencies | - | 2001-01-01
+
+
+Self-attention, sometimes called intra-attention is an attention mechanism relating different positions of a single sequence in order to compute a representation of the sequence. Self-attention has been used successfully in a variety of tasks including reading comprehension, abstractive summarization, textual entailment and learning task-independent sentence representations[4,27,28,22].
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [4] Long Short-Term Memory-Networks for Machine Reading | - | 2016-01-25
+| [28] A Deep Reinforced Model for Abstractive Summarization | - | 2017-05-11
+| [22] A Structured Self-Attention Sentence Embedding | - | - 
+
+End-to-end memory networks are based on a recurrent attention mechanism instead of sequence-aligned recurrence and have been shown to perform well on simple-language question answering and language modeling tasks.[34]
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [34] End-To-End Memory Networks | - | -
+
+
+To the best of our knowledge, however, the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution. In the following sections, we will describe the Transformer, motivate self-attention and discuss its advantages over models such as [17,18] and [9].
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [17] Neural GPUs Learn Algorithms | - | 2015-11-25
+| [18] Neural Machine Translation in Linear Time | - | 2016-10-31
+| [9] Convolutional Sequence to Sequence Learning | - | 2017-05-08
+
+
+
+
+
 ## 结论
 
 In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.
