@@ -42,8 +42,28 @@ Recurrent neural networks, long shot-term memory[13] and gated recurrent[7] neur
 | [15] Exploring the limits of language modeling | - | 2016-02-07
 
 
-Recurrent models typically(通常) factor computation along the symbol positions of the input and output sequences. Aligning the positions to steps in computation time, they generate a sequence of hidden states $h_t$, as a function of the previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. Recent work has achieved significant improvements in computational efficiency through factorization tricks[21] and conditional computation[32], while also improving model performance in case of the latter. The fundamental constraint of sequential computation, however, remains.
+Recurrent models typically(通常) factor computation along the symbol positions of the input and output sequences. Aligning the positions to steps in computation time, they generate a sequence of hidden states $h_t$, as a function of the previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples.(序列很长的时候，为了使当前时刻能依然能获取很早的隐含特征，则需要将那么时刻的隐含特征都存储下来，则比较耗内存) Recent work has achieved significant improvements in computational efficiency through factorization tricks[21] and conditional computation[32], while also improving model performance in case of the latter. The fundamental constraint of sequential computation, however, remains.
+
 
 | 论文名称 | 论文别名 | 论文时间
 | :------- | :------ | :--------
 | Factorization tricks for LSTM networks | - | 2017-02-17
+
+Attention mechanisms have become an integral(不可缺少的) part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences[2,19]. In all but a few cases(除少数情况外)[27], however, such attention mechanisms are used in conjunction with a recurrent network.
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [2] Neural Machine Translation by Jointly Learning to Align and Translate | - | 2014-01-01
+| [19] Structured Attention Networks | - | 2017-02-03
+
+
+In this work we propose the Transformer, a model architecture eschewing(避免) recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.
+
+## 结论
+
+In this work, we presented the Transformer, the first sequence transduction model based entirely on attention, replacing the recurrent layers most commonly used in encoder-decoder architectures with multi-headed self-attention.
+
+For translation tasks, the Transformer can be trained significantly(显著地) faster than architectures based on recurrent or convolutional layers. On both WMT 2014 English-to-German and WMT 2014 English-to-French tasks, we achieve a new state of the art. In the former task our best model outperforms even all previously reported ensembles.
+
+We are excited about the future of attention-based models and plan to apply them to other tasks. We plan to extend the Transformer to problems involving input and output modalities other than text and to investigate local, restricted attention mechanisms to efficiently handle large inputs and outputs such as images, audio and video. Making generation less sequential(使生成不那么时序化) is another research goals of ours.
