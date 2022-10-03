@@ -53,11 +53,12 @@ nav:
     - 手动实现卷积: ./deep_learning/conv2d.md
   - 目标检测篇:
     - yolov5: ./object_detection/ObjectDetection.md
+  - 目标分类:
+    - ViT: ./object_classification/vit.md
   - 视觉多模态: 
-    - 论文阅读: 
-      - CLIP:
-        - 论文拆解: ./VisionMultiModal/paper_converge.md
-        - 论文全篇翻译: ./VisionMultiModal/CLIP.md
+    - 论文: 
+      - CLIP: ./VisionMultiModal/paper/CLIP.md
+      - MAE: ./VisionMultiModal/paper/MAE.md
     - 数据集: ./VisionMultiModal/dataset.md
     - VideoMAE: ./VisionMultiModal/VideoMAE.md
     - MAE: 
