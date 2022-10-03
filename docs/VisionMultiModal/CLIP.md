@@ -402,6 +402,28 @@ While we have extensively(广泛地) analyzed the task-learning capabilities of 
 | On Empirical Comparisons of Optimizers for Deep Learning | 用于深度学习的优化器的经验性比较 | - | Choi et al.,2019
 
 
-Figure 10 summarizes our findings. 
+Figure 10 summarizes our findings. To minimize selection effects that could raise concerns of confirmation or reporting bias, we first study performance on the 12 dataset evaluation suite from Kornblith et al.(2019). While small CLIP models such as a ResNet-50 and ResNet-101 outperform other ResNets trained on ImageNet-1K(BiT-S and the originals), they underperform ResNets trained on ImageNet-21K(BiT-M). These small CLIP models also underperform models in the EfficeintNet family with similar compute requirements. However, models trained with CLIP scale very well and the largest model we trained (ResNet-50x64) slightly outperforms the best performing existing model (a Noisy Student EfficientNet-L2) on both overall score and compute efficiency. We also find that CLIP vision transformers are about 3x more compute efficient than CLIP ResNets, which allows us to reach higher overall performance within our compute budget(预算). These results qualitatively replicate(复制) the findings of Dosovitskiy et al.(2020) which reported that vision transformers are more compute efficient than convnets when trained on sufficiently large datasets. Our best overall model is a ViT-L/14 that is fine-tuned at a higher resolution of 336 pixels on our dataset for 1 additional epoch. This model outperforms the best existing model across this evaluation suite by an average of 2.6%.
 
 
+Figure 10. Linear probe performance of CLIP models in comparison with state-of-the-art computer vision models, including EfficientNet(Tan & Le,2019; Xie et al.,2020), MoCo(Chen et al.,2020d), Instagram-pretrained ResNeXt models (Mahajan et al.,2018;Touvron et al,.2019), BiT(Kolesnikov et al.,2019), ViT(Dosovitskiy et al.,2020), SimCLRv2(Chen et al.,2020c), BYOL(Grill et al.,2020), and the original ResNet models. (Left) Scores are averaged over 12 datasets studied by Kornblith et al.(2019). (Right) Scores are averaged over 27 datasets that contain a wider variety of distributions. Dotted lines indicate models fine-tuned or evaluated on images at a higher-resolution than pre-training. See Table 10 for individual scores and Figure 20 for plots for each dataset.
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Efficientnet: Rethinking model scaling for convolutional neural networks. | - | - | Tan & Le,2019
+| Self-training with Noisy Student improves ImageNet classification | - | - | Xie et al.,2020
+| Improved Baselines with Momentum Contrastive Learning | - | MoCo | Chen et al.,2020d
+| Exploring the Limits of Weakly Supervised Pretraining | - | - | Mahajan et al.,2018
+| Fixing the train-test resolution discrepancy | - | - | Touvron et al,.2019
+| Large Scale Learning of General Visual Representations for Transfer. | - | BiT | Kolesnikov et al.,2019
+| An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale | - | ViT | Dosovitskiy et al.,2020
+| Big Self-Supervised Models are Strong Semi-Supervised Learners | - | SimCLRv2 | Chen et al.,2020c
+| Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning | - | BYOL | rill et al.,2020 
+| Do Better ImageNet Models Transfer Better? | - | - | Kornblith et al.,2019
+
+
+As Figure 21 qualitatively shows, CLIP models learn a wider(相比更广泛的) set of tasks than has previously been demonstrated in a single computer vision model trained ene-to-end from random initialization. These tasks include geo-localization, optical character recognition, facial emotion recognition, and action recognition. None of these tasks are measured in the evaluation suite of Kornblith et al.(2019). This could be argued to be a form of selection bias in Kornblith et al.(2019)'s study towards tasks that overlap(重叠) with ImageNet. To address this, we also measure performance on a broader 27 dataset evaluation suite. This evaluation suite, detailed in Appendix A includes datasets representing the aforementioned tasks, German Traffic Signs Recognition Benchamark(Stallamp et al.,2011), as well as several other datasets adapted from VTAB(Zhai et al.,2019).
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Do Better ImageNet Models Transfer Better? | - | - | Kornblith et al.,2019
+| A Large-scale Study of Representation Learning with the Visual Task Adaptation Benchmark | - | - | Zhai et al.,2019
