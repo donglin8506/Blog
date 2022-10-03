@@ -427,3 +427,55 @@ As Figure 21 qualitatively shows, CLIP models learn a wider(相比更广泛的) 
 | :------- | :------- | :------ | :--------
 | Do Better ImageNet Models Transfer Better? | - | - | Kornblith et al.,2019
 | A Large-scale Study of Representation Learning with the Visual Task Adaptation Benchmark | - | - | Zhai et al.,2019
+
+
+On this broader evaluation suite, the benefits of CLIP are more clear. All CLIP models, regradless of scale, outperform all evaluated systems in terms of compute efficiency. The improvement in average score of the best model over previous systems increases from 2.6% to 5%. We also find taht self-supervised systems do noticeably(明显) better on our broader evaluation suite. For instance, while SimCLRv2 still underperforms BiT-M on average on the 12 datasets of Kornblith et al.(2019), SimCLRv2 outperforms BiT-M on our 27 dataset evaluation suite. These findings suggest continuing to expand task diversity and coverage in order to better understand the "general" performance of systems. We suggest additional evaluation efforts along the lines of VTAB to be valuable.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Do Better ImageNet Models Transfer Better? | - | - | Kornblith et al.,2019
+
+
+In addition to the aggregate analysis above, we visualize per-dataset differences in the performance of the best CLIP model and the best model in our evaluation suite across all 27 datasets in Figure 11. CLIP outperforms the Noisy Student EfficientNet-L2 on 21 of the 27 datasets. CLIP improves the most on tasks which require OCR(SST2 and HatefulMemes), geo-localization and scene recognition(Country211, SUN397), and activity recognition in videos(Kinetics700 and UCF101). In addition CLIP also does much better on fine-grained car and traffic sign recognition(Stanford Cars and GTSRB). This may reflect a problem with overly narrow supervision in ImageNet. A result such as the 14.7% improvement on GTSRB could be indicative of an issue with ImageNet-1K, which has only a single label for all traffic and street signs. This could encourage a supervised representation to collapse(崩溃、坍塌) intra-class details and hurt accuracy on a fine-grained downstream task. As mentioned, CLIP still underperforms the EfficientNet on several datasets. Unsurprisingly, the dataset that the EfficientNet does best relative to CLIP on is the one it was trained on: ImageNet. The EfficientNet also slightly outperforms CLIP on low-resolution datasets such as CIFAR10 and CIFAR100. We suspect this is at least partly due to the lack of scale-based data augmentation in CLIP. The EfficientNet also does slightly better on PatchCamelyon and CLEVRCounts, datasets where overall performance is still low for both approaches.
+
+Figure 11. CLIP's features outperform the features of the best ImageNet model on a wide variety of datasets. Fitting a linear classifier on CLIP's features outperforms using the Noisy Student EfficientNet-L2 on 21 out of 27 datasets.
+
+
+## 3.3 Robustness to Natural Distribution Shift (有自然的分布偏移的情况下 CLIP的鲁棒性是怎样的)
+
+In 2015, it was announced that a deep learning model exceeded human performance on the ImageNet test set(He et al.,2015). However, research in the subsequent(后来的) years has repeatedly found that these models still make many simple mistakes(Dodge & Karam,2017;Geirhos et al.,2018;Alcorn et al.,2019), and new benchmarks testing these systems has often found their performance to be much lower than both their ImageNet accuracy and human accuracy(Recht et al.,2019;Barbu et al.,2019). What explains this discrepancy? Various ideas have been suggested and studied (IIyas et al.,2019;Geirhos et al.,2020). A common theme of proposed explanations is that deep learning models are exceedingly adept at(非常擅长的) finding correlations and patterns which hold across their trainiing dataset and thus improve in-distribution performance. However many of these correlations and patterns are actually spurious(虚假的) and do not hold for other distributions and result in large drops in performance on other datasets.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| A Study and Comparison of Human and Deep Learning Recognition Performance Under Visual Distortions | - | - | Dodge & Karam,2017
+| ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness | - | - | Geirhos et al.,2018
+| Strike(With) a Pose: Neural Networks Are Easily Fooled by Strange Poses of Familliar Objects | - | - | Alcorn et al.,2019
+| Do ImageNet Classifiers Generalize to ImageNet | - | - | Recht et al.,2019
+| ObjectNet: A large-scale bias-controlled dataset for pushing the limits of object recognition models | - | - | Barbu et al.,2019
+| Adversarial(对抗的) Examples Are Not Bugs, They Are Features | - | - | IIyas et al.,2019
+| Shortcut Learning in Deep Neural Networks | - | - | Geirhos et al.,2020
+
+
+We caution that(警告), to date, (至今为止) most of these studies limit their evaluation to models trained on ImageNet. Recalling the topic of discussion, it may be a mistake to generalize too far from these initial findings. To what degree are these failures attibutable to deep learning, ImageNet, or some combination of the two? CLIP models, which are trained via natural language supervision on a very large dataset and are capable of high zero-shot performance, are an opportunity to investigate this question from a different angle.
+
+
+Taori et al.(2020) is a recent comprehensive study moving towards quantifying and understanding these bahaviors for ImageNet models.Taori et al.(2020) study how the performance of ImageNet models change where evaluated on natural distribution shifts. They measure performance on a set of 7 distribution shifts: ImageNetV2 (Recht et al.,2019), ImageNet Sketch(Wang et al.,2019), Youtube-BB and ImageNet-Vid(Shankar et al.,2019), ObjectNet(Barbu et al.,2019), ImageNet Adversarial(Hendrycks et al.,2019), and ImageNet Rendition(Hendrycks et al.,2020a). They distinguish(区分) these datasets, which all consist of novel images collected from a variety of sources, from synthetic distribition shifts such as ImageNet-C(Hendrycks & Dietterich,2019), Stylized ImageNet(Geirhos et al.,2018), or adversarial attacks(Goodfellow et al.,2014) which are created by perturbing(扰动) existing images in various ways. They propose this distinction(区别) because in part because they find that while several techniques have been demonstrated to improve performance on synthetic distribution shifts, they often fail to yield consistent improvements on natural distributions.
+
+
+| 论文名称 | 标题翻译 | 论文别名 | 论文时间
+| :------- | :------- | :------ | :--------
+| Measuring Robustness to Natural Distribution Shifts in Image Classification | - | - | Taori et al.(2020)
+| Do ImageNet Classifiers Generalize to ImageNet | - | ImageNetV2 | Recht et al.,2019
+| Learning Robust Global Representations by Penalizing Local Predictive Power | - | ImageNet Sketch | Wang et al.,2019
+| Do Image Classifiers Generalize Across Time | - | ImageNet-Vid | Shankar et al.,2019
+| ObjectNet: A large-scale bias-controlled dataset for pushing the limits of object recognition models | - | ObjectNet | Barbu et al.,2019
+| The Many Faces of Robustness: A Critical Analysis of Out-of-Distribution Generalization | - | ImageNet Rendition | Hendrycks et al.,2020a
+| Benchmarking Neural Network Robustness to Common Corruptions and Perturbations | - | ImageNet-C | Hendrycks & Dietterich,2019
+| ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness | - | Stylized ImageNet | Geirhos et al.,2018
+| Explaining and Harnessing Adversarial Examples | - | - | Goodfellow et al.,2014
+
+
+Across these collected datasets, the accuracy of ImageNet models drop well below the expectation set by the ImageNet validation set. For the following summary discussion we report average accuracy across all 7 natural distribution shift datasets and average accuracy across the corresonding class subsets of ImageNet unless otherwise specified. Additionally, for Youtube-BB and ImageNet-Vid, which have two different evaluation settings, we use the average of pm-0 and pm-10 accuracy.
+
