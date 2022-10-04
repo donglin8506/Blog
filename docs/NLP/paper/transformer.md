@@ -114,7 +114,7 @@ The Transformer follows this overall architecture using stacked self-attention a
 
 #### **3.1 Encoder and Decoder Stacks**
 
-**Encoder:** The encoder is composed of a stack of N = 6 identical layers. Each layer has two sub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-wise fully connected feed-forward network. We employ a residual connection[11] around each of the two sub-layers, followed by layer normalization [1]. That is, the output of each sub-layer is LayerNorm($x$ + Sublayer($x$)), where Sublayer($x$) is the function implemented by the sub-layer itself. To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension $d_{model}=512$.
+**Encoder:** The encoder is composed of a stack of N = 6 identical layers. Each layer has two sub-layers. The first is a multi-head self-attention mechanism, and the second is a simple, position-wise fully connected feed-forward network(一个简单的MLP层). We employ a residual connection[11] around each of the two sub-layers, followed by layer normalization [1]. That is, the output of each sub-layer is LayerNorm($x$ + Sublayer($x$)), where Sublayer($x$) is the function implemented by the sub-layer itself. To facilitate these residual connections, all sub-layers in the model, as well as the embedding layers, produce outputs of dimension $d_{model}=512$.
 
 
 | 论文名称 | 论文别名 | 论文时间
@@ -122,8 +122,73 @@ The Transformer follows this overall architecture using stacked self-attention a
 | [11] Deep Residual Learning for Image Recognition | ResNet | 2015-12-10
 | [1] Layer Normalization | - | 2016-07-21
 
+什么是LN层？
 
-**Decoder:** The decoder is also composed of a stack of $N=6$ identical layers. In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack. Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization. We also modify the self-attention sub-layer in the decoder stack to prevent positions from attending to subsequence positions. This masking, combined with fact that the output embeddings 
+
+
+**Decoder:** The decoder is also composed of a stack of $N=6$ identical layers. In addition to the two sub-layers in each encoder layer, the decoder inserts a third sub-layer, which performs multi-head attention over the output of the encoder stack. Similar to the encoder, we employ residual connections around each of the sub-layers, followed by layer normalization. We also modify the self-attention sub-layer in the decoder stack to prevent positions from attending to subsequence positions. This masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position $i$ can depend only on the known outputs at positions less than $i$.
+
+#### **3.2 Attention**
+
+
+An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The output is computed as a weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key.
+
+
+###### **3.2.1 Scaled Dot-Product Attention**
+
+We call our particular attention "Scaled Dot-Product Attention" (Figure 2). The input consists of queries and keys of dimension $d_k$, and values of dimension $d_v$. We compute the dot products of the query with all keys, divide each by $\sqrt{d_k}$, and apply a softmax function to obtain the weights on the values.
+
+In practice, we compute the attention function on a set of queries simultaneously(同时), packed together into a matrix $Q$. The keys and values are also packed together into matrices $K$ and $V$. We compute the matrix of outputs as:
+
+$$
+Attention(Q,K,V)=softmax(\frac{QK^T}{\sqrt{d_k}})V
+$$
+
+The two most commonly used attention functions are additive attention[2], and dot-product (multi-plicative 乘法的) attention. Dot-production attention is identical to our algorithm, except for the scaling factor of $\frac{1}{\sqrt{d_k}}$. Additive attention computes the compatibility function using a feed-forward network with a single hidden layer. While the two are similar in theoretical complexity, dot-product attention is much faster and more space-efficient in practice, since it can be implemented using highly optimized matrix multiplication code.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| Neural Machine Translation by Jointly Learning Align and Translate | - | 2014-01-01
+
+
+While for small values of $d_k$ the two mechanisms perform similarily, additive attention outperforms dot product attention without scaling for larger values of $d_k$[3]. We suspect that for large values of $d_K$, the dot products grow large in magnitude, pushing the softmax function into regions where it has extremely small gradients. To counteract this effect, we scale the dot products by $\frac{1}{\sqrt{d_k}}$.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [3] Massive Exploration of Neural Machine Translation Architectures | - | 2017-03-11
+
+###### **3.2.2 Multi-Head Attention**
+
+Instead of performing a single attention function with $d_{model}$-dimensional keys, values and queries, we found it beneficial to linearly project the queries, keys and values h times with different, learned linear projections to $d_q$, $d_k$, $d_v$ dimensions, respectively. On each of these projected versions of queries, keys and values we then perform the attention function in parallel, yielding $d_v$-dimensional output values. These are concatenated and once again projected, resulting in the final values, as depicted in Figure 2.
+
+
+Multi-head attention allows the model to jointly attend to information from different representation subspaces at different positions. With a single attention head, averagin inhibits this.
+
+$$
+MultiHead(Q,K,V)=Concat(head_1, ..., head_h)W^O
+$$
+$$
+head_i = Attention(QW_{i}^{Q}, KW_{i}^{K}, VW_{i}^{V})
+$$
+
+Where the projections are parameter matrices $W_{i}^{Q} \in R^{d_{model} \times d_k}$, $W_{i}^{K} \in R^{d_{model} \times d_k}$, $W_{i}^{V} \in R^{d_{model} \times d_v}$ and $W^O \in R^{hd_v \times d_{model}}$.
+
+In this work we employ $h=8$ parallel attention layers, or heads. For each of these we use $d_k=d_v=d_{model}/h=64$. Due to the reduced dimension of each head, the total computational cost is similar to that of single-head attention with fully dimensionality.
+
+###### **3.2.3 Applications of Attention in our Model**
+
+The Transformer uses multi-head attention in three different ways:
+
+- In "encoder-decoder attenion" layers, the queries come from the previous decoder layer, and the memory keys and values come from the output of the encoder. This allows every position in the decoder to attend over all positions in the input sequence. This mimics(模仿) the typical encoder-decoder attention mechanisms in sequence-to-sequence models such as [38,2,9].
+- The encoder contains self-attention layers. In a self-attention layer all of the keys, values and queries come from the same place, in this case, the output of the previous layer in the encoder. Each position in the encoder can attend to all positions in the previous layer of the encoder.
+- Similarly, self-attention layers in the decoder allow each position in the decoder to attend to all positions in the decoder up to and including that position. We need to 
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [38] Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation | - | 2016-09-26
+| [2] Neural Machine Translation by Jointly Learning to Align and Translate | - | 2014-01-01
+| [9] Convolutional sequence to sequence learning. | - | 2017
+
 
 ## 结论
 
