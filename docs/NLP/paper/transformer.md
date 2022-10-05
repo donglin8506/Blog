@@ -200,9 +200,48 @@ $$
 While the linear transformations are the same across different positions, they use different parameters from layer to layer. Another way of describing this is as two convolutions with kernel size 1. The dimensionality of input and output is $d_{model}=512$, and the inner-layer has dimensionality $d_{ff}=2048$.
 
 
+每个MLP单独作用到一个向量上；不同向量上的MLP共享参数；
+
+由于向量在自注意力层中已经融合了所有输入向量的特征，包括其中的时序信息，所以可以进行单独的MLP操作。
+
+层与层之间的MLP是不同的，同一层不同位置的MLP是相同的。
+
+MLP中有一个隐藏层，维度是2048，输入是512维度，输出是512维度。
+
 #### **3.4 Embeddings and Softmax**
 
-Similarly to other sequence transduction models, we use learned 
+Similarly to other sequence transduction models, we use learned embeddings to convert the input tokens and output tokens to vectors of dimension $d_{model}$. We also use the usual learned linear transformation and softmax function to convert the decoder output to predicted next-token probablities. In our model, we share the same weight matrix between the two embedding layers and the pre-softmax linear transformation, similar to [30]. In the embedding layers, we multiply those weights by $\sqrt{d_{model}}$.
+
+#### **3.5 Positional Encoding**
+
+Since our model contains no recurrence and no convolution, in order for the model to make use of the order of the sequence, we must inject(注入) some information about the relative or absolute position of the tokens in the sequence. To this end, we add "positional encodings" to the input embeddings at the bottoms of the encoder and decoder stacks. The positional encodings have the same dimension $d_{model}$ as the embeddings, so that the two can be summed. There are many choices of positional encodings, learned and fixed[9].
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [9] Convolutional Sequence to Sequence Learning | - | 2017-05-08
+
+In this work, we use sine and cosine functions of different frequencies:
+
+$$
+PE_{(pos, 2i)}=sin(pos/10000^{2i/d_{model}})
+$$
+
+$$
+PE_{pos, 2i+1}=cos(pos/10000^{2i/d_{model}})
+$$
+
+where $pos$ is the position and $i$ is the dimension. That is, each dimension of the positional encoding corresponds to a sinusoid. The wavelengths form a geometric progression(一个几何级数) from $2\pi$ to $1000 * 2\pi$. We chose this function because we hypothesized it would allow the model to easily learn to attend by relative positions, since for any fixed $k$,$PE_{pos+k}$ can be represented as a linear function of $PE_{pos}$.
+
+We also experimented with using learned positional embeddings[9] instead, and found that the two versions produced nearly identical results(see Table 3 row E). We chose the sinusoidal version because it may allow the model to extrapolate to sequence lengths longer than the ones encountered during training.
+
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [9] Convolutional Sequence to Sequence Learning | - | 2017-05-08
+
+
+
 
 ## 结论
 
