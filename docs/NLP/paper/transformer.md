@@ -241,7 +241,141 @@ We also experimented with using learned positional embeddings[9] instead, and fo
 | [9] Convolutional Sequence to Sequence Learning | - | 2017-05-08
 
 
+## 为什么是自注意力机制
 
+In this section we compare various aspects of self-attention layers to the recurrent and convolutional layers commonly used for mapping one variable-length sequence of symbol representations ($x_1, ..., x_n$) to another sequence of equal length ($z_1, ..., z_n$), with $x_i, z_i \in R^d$, such as a hidden layer in a typical sequence transduction encoder to encoder. Motivating our use of self-attention we consider three desiderata.
+
+One is the total computational complexity per layer. Another is the amount of computation that can be parallelized, as measured by the minimum number of sequential operations required.
+
+The third is the path length between long-range dependencies in the network. Learning long-range dependencies is key challenge in many sequence transduction tasks. One key factor affecting the ability to learn such dependencies is the length of the paths forward and backward signals have to traverse in the network. The shorted these paths between any combination of positions in the input and output sequences, the easier it is to learn long-range dependencies[12]. Hence we also compare the maximum path length between any two input and output positions in networks composed of the different layer types.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [12] Gradient FLow in Recurrent Nets: the Difficulty of Learning Long-Term Dependencies | - | 2001-01-01
+
+As noted in Table 1, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length $n$ is smaller than the representation dimensionality $d$, which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as wrod-piece[38] and byte-pair[31] representations. To improve computational performance for tasks involving very long sequences, self-attention could be restricted to considering only a neighborhood of size $r$ in the input sequence centered around the respective(各自的) output position. This would increase the maximum path length to $O(n/r)$. We plan to investigate this approach further in future work.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [38] Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation | - | 2016-09-26
+| [31] Neural Machine Translation of Rare Words with Subword Units | - | 2015-08-31
+
+
+A single convolutional layer with kernel width $k<n$ does not connect all pairs of input and output positions. Doing so requires a stack of $O(n/k)$ convolutional layers in the case of contiguous kernels, or $O(log_k(n))$ in the case of dilated convolutions[18], increasing the length of the longest paths between any two positions in the network. Convolutional layers are generally more expensive than recurrent layers, by a factor of $k$. Separable convolutions[6], however, decrease the complexity considerably, to $O(k*n*d+n*d^2)$. Even with $k=n$, the complexity of a separable convolution is equal to the combination of a self-attention layer and a point-wise feed-forward layer, the approach we take in our model.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [18] Neural Machine Translation In Linear Time | - | 2016-10-31
+| Xception: Deep Learning with Depthwise Separable Convolutions | - | 2017-07-21
+
+
+As side benefit (作为附带利益), self-attention could yield more interpretable(可解释的) models. We inspect attention distributions from our models and present and discuss examples in the appendix. Not only do individual attention heads clearly learn to perform different tasks, many appear to exhibit behavior related to the syntactic(句法) and semantic structure of the sentences.
+
+Table 1: Maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. $n$ is the sequence length, $d$ is the representation dimension, $k$ is the kernel size of convolutions and $r$ is the size of the neighborhood in restricted self-attention.
+
+| Layer Type | Complexity per Layer | Sequentail Operations | Maximum Path Length 
+| :---------- | :----- | :------ | :-----
+| Self-Attention | $O(n^2 * d)$ | $O(1)$ | $O(1)$
+| Recurrent | $O(n * d^2)$ | $O(n)$ | $O(n)$
+| Convolutional | $O(k*n*d^2)$ | $O(1)$ | $O(log_k(n))$
+| Sel-Attention (restricted) | $O(r * n * d)$ | $O(1)$ | $O(n/r)$
+
+
+## 训练
+
+This section describes the training regime for our models.
+
+#### **5.1 Traning Data and Batching**
+
+We trained on the standard WMT 2014 English-German dataset consisting of about 4.5 million sentence pairs. Sentences were encoded using byte-pair encoding [3], which has a shared sourcetarget vocabulary of about 37000 tokens. For English-French, we used the significantly larger WMT 2014 English-French dataset consisting of 36M sentences and split tokens into a 32000 word-piece vocabulary [38].Sentence pairs were batched together by approximate sequence length. Each training batch contained a set of sentence pairs containing approximately 25000 source tokens and 25000 target tokens.
+
+byte-pair: 同一个英语词可能有多种形式，例如 like/liking等，提取相同英语词的词根 弄到词典里，这样词典中的词可以比较少。这里 英语和德语使用相同的词库，也就有相同的词向量。
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [3] Massive Exploration of Neural Machine Translation Architectures | - | 2017-03-11
+| [38] Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation | - | 2016-09-26
+
+#### **5.2 Hardware and Schedule**
+
+We trained our models on one machine with 8 NVIDIA P100 GPUs. For our base models using the hyperparameters described throughout the paper, each training step took about 0.4 seconds.  We trained the base models for a total of 100,000 steps or 12 hours. For our big models,(described on the bottom line of table 3), step time was 1.0 seconds. The big models were trained for 300,000 steps (3.5 days).
+
+#### **5.3 Optimizer**
+
+We used the Adam optimizer[20] with $\beta_1=0.9$, $\beta_2=0.98$, and $\epsilon=10^{-9}$. We varied the learning rate over the course of training, according to the formula:
+
+$$
+lrate = d_{model}^{-0.5} \cdot min(step\_num^{-0.5}, step\_num \cdot warmup\_steps^{-1.5})
+$$
+
+This corresponds to increasing the learning rate linearly for the first $warmup\_steps$ and decreasing it thereafter(此后) proportionally(成比例) to the inverse(倒数) square root of the step number. We used $warmup\_steps=4000$.
+
+
+#### **5.4 Regularization**
+
+We employ three types of regularization during training:
+
+**Residual Dropout** We apply dropout [33] to the output of each sub-layer, before it is added to the sub-layer input and normalized.In addition, we apply dropout to the sums of the embeddings and the positional encodings in both the encoder and decoder stacks. For the base model, we use a rate of $P_{drop}=0.1$.
+
+**Label Smoothing** During training, we employed label smoothing of value $\epsilon_{ls}=0.1$[36]. This hurts perplexity, as the model learns to be more unsure, but improves accuracy and BLEU score.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [33] Dropout: a simple way to prevent neural networks from overfiting | Dropout | 2014-01-01
+| [36] Rethinking the Inception Architecture for Computer Vision | - | 2015-12-02
+
+
+## **6 Results**
+
+**6.1 Machine Translation**
+
+On the WMT 2014 English-to-German translation task, the big transformer model (Transformer (big) in Table 2) outperforms the best previously reported models (including ensembles) by more than 2.0BLEU, establishing a new state-of-the-art BLEU score of 28.4. The configuration of this model is listed in the bottom line of Table 3.Training took 3.5 days on 8 P100 GPUs. Even our base model surpasses all previously published models and ensembles, at a fraction of the training cost of any of the competitive models.
+
+On the WMT 2014 English-to-French translation task, our big model achieves a BLEU score of 41.0, outperforming all of the previously published single models, at less than $1/4$ the training cost of the previous state-of-the-art model. The Transformer (big) model trained for English-to-French used dropout rate $P_{drop}=0.1$, instead of 0.3.
+
+For the base models, we used a single model obtained by averaging the last 5 checkpoints, which were written at 10-minute intervals.For the big models, we averaged the last 20 checkpoints. We used beam search(束搜索) with a beam size of 4 and length penalty $\alpha=0.6$[38]. These hyperparameters were chosen after experimentation on the development set. We set the maximum output length during inference to input length + 50, but terminate early when possible [38].
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| Google's Neural Machine Translation System: Bridging the Gap between Human and Machine Translation | - | 2016-09-26
+
+Table 2 summarizes our results and compares our translation quality and training costs to other model architectures from the literature. We estimate the number of floating point operations used to train a model by multiplying the training time, the number of GPUs used, and an estimate of the sustained single-precision floating-point capacity of each GPU.
+
+**6.2 Model Variations**
+
+To evaluate the importance of different components of the Transformer, we varied our base model in different ways, measuring the change in performance on English-to-German translation on the development set, newstest2013.We used beam search as described in the previous section, but no checkpoint averaging. We present these results in Table 3.
+
+In Table 3 rows (A), we vary the number of attention heads and the attention key and value dimensions, keeping the amount of computation constant, as described in Section 3.2.2.While single-head attention is 0.9 BLEU worse than the best setting, quality also drops off with too many heads.
+
+In Table 3 rows (B), we observe that reducing the attention key size $d_k$ hurts model quality. This suggests that determining compatibility is not easy and that a more sophisticated compatibility function than dot product may be beneficial. We further observe in rows (C) and (D) that, as expected, bigger models are better, and dropout is very helpful in avoiding over-fitting. In row (E) we replace our sinusoidal positional encoding with learned positional embeddings [9], and observe nearly identical results to the base model.
+
+**6.3 English Constituency Parsing**
+
+To evaluate if the Transformer can generalize to other tasks we performed experiments on English constituency parsing. This task presents specific challenges: the output is subject to(受制于) strong structural constraints and is significantly longer than the input. Furthermore, RNN sequence-to-sequence models have not been able to attain state-of-the-art results in small-data regimes(方案).[37]
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [37] Grammer as a Foreign Language | - | 2014-12-23
+
+We trained a 4-layer transformer with $d_{model}=1024$ on the Wall Street Journal (WSJ) portion of the Penn Treebank [25], about 40K training sentences. We also trained it in a semi-supervised setting, using the larger high-confidence and BerkleyParser corpora from with approximately 17M sentences [37]. We used a vocabulary of 16K tokens for the WSJ only setting and a vocabulary of 32K tokens for the semi-supervised setting.
+
+
+
+We performed only a small number of experiments to select the dropout, both attention and residual (section 5.4), learning rates and beam size on the Section 22 development set, all other parameters remained unchanged from the English-to-German base translation model. During inference, we increased the maximum output length to input length + 300. We used a beam size of 21 and $\alpha=0.3$ for both WSJ only and the semi-supervised setting.
+
+
+Our results in Table 4 show that despite the lack of task-specific tuning our model performs surprisingly well, yielding better results than all previously reported models with the exception of the Recurrent Neural Network Grammar [8].
+
+In contrast to RNN sequence-to-sequence models [37], the Transformer outperforms the BerkeleyParser [29] even when training only on the WSJ training set of 40K sentences.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [25] Building a large annotated corpus of English: the penn treebank
+| [37] Grammer as a Foreign Language | - | 2014-12-23
+| [8] Recurrent Neural Network Grammars | - | 2016-02-25
+| [29] Learning Accurate, Compact, and interpretable Tree Annotation | - | 2006-07-17
 
 ## 结论
 
