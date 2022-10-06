@@ -83,7 +83,11 @@ Most related to ours is the model of Cordonnier et al. (2020), which extracts pa
 | ViLBERT: Pretraining Task-Agnostic Visiollnguistic(视觉语言主义者) Representations for Vision-and-Language Tasks | ViLBERT | Lu et al., 2019
 | VisualBERT: A Simple and Performant Baseline for Vision and Language | VisualBERT | Li et al., 2019
 
-Another recent related model is image GPT (iGPT) (Chen et al., 2020a), which applies Transformers to image pixels after reducing image resolution and color space.
+Another recent related model is image GPT (iGPT) (Chen et al., 2020a), which applies Transformers to image pixels after reducing image resolution and color space.The model is trained in an unsupervised fashion as a generative model, and the resulting representation can then be fine-tuned or probed linearly for classification performance, achieving a maximal accuracy of 72% on ImageNet.
 
 | 论文名称 | 论文别名 | 论文时间
 | :------- | :------ | :--------
+| Generative pretraining from pixels | iGPT | Chen et al., 2020a
+
+
+     
