@@ -89,5 +89,27 @@ Another recent related model is image GPT (iGPT) (Chen et al., 2020a), which app
 | :------- | :------ | :--------
 | Generative pretraining from pixels | iGPT | Chen et al., 2020a
 
+Our work adds to the increasing collection of papers that explore image recognition at larger scales than the standard ImageNet dataset. The use of additional data allows to achieve state-of-the-art results on standard benchmarks (Mahajan et al., 2018; Touvron et al., 2019; Xie et al., 2020). Moreover, Sun et al. (2017) study how CNN performance scales with dataset size, and Kolesnikov et al. (2020); Djolonga et al. (2020) perform an empirical exploration of CNN transfer learning from large scale datasets such as ImageNet-21k and JFT-300M. We focus on these two latter datasets as well, but train Transformers instead of ResNet-based models used in prior works.
 
      
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| Exploring the Limits of Weakly Supervised Pretraining | - | Mahajan et al., 2018
+| Fixing the train-test resolution discrepancy | - | Touvron et al., 2019
+| Self-training with noisy student improves imagenet classification | - | Xie et al., 2020
+| Revisiting Unreasonable(不合理的) of Data in Deep Learning Era | - | Sun et al. (2017)
+| Big transfer(BiT): General visual representation learning | BiT | Kolesnikov et al. (2020)
+| On robustness and transferability of convolutional neural networks  | - | Djolonga et al. (2020)
+
+
+## 3 Method
+
+In model design we follow the original Transformer (Vaswani et al., 2017) as closely as possible. An advantage of this intentionally simple setup is that scalable NLP Transformer architectures – and their efficient implementations – can be used almost out of the box.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| All is All You Need | Transformer | Vaswani et al., 2017
+
+#### 3.1 Vision Transformer (ViT)
+
+An overview of the model is depicted in Figure 1. 
