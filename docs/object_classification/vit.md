@@ -148,3 +148,12 @@ $$
 
 \end{align}
 $$
+
+
+**Inductive bias.** We note that Vision Transformer has much less image-specific inductive bias than CNNs.In CNNs, locality, two-dimensional neighborhood structure, and translation equivariance are baked into each layer throughout the whole model.In ViT, only MLP layers are local and translationally equivariant, while the self-attention layers are global.The two-dimensional neighborhood structure is used very sparingly: in the beginning of the model by cutting the image into patches and at fine-tuning time for adjusting the position embeddings for images of different resolution (as described below). Other than that, the position embeddings at initialization time carry no information about the 2D positions of the patches and all spatial relations between the patches have to be learned from scratch.
+
+**Hybrid Architecture** As an alternative to raw image patches, the input sequence can be formed from feature maps of a CNN (LeCun et al., 1989). In this hybrid model, the patch embedding projection E (Eq. 1) is applied to patches extracted from a CNN feature map. As a special case, the patches can have spatial size 1x1, which means that the input sequence is obtained by simply flattening the spatial dimensions of the feature map and projecting to the Transformer dimension. The classification input embedding and position embeddings are added as described above.
+
+#### 3.2 Fine-Tuning And Higher Resolution
+
+Typically, we pre-train ViT on large datasets, and fine-tune to (smaller) downstream tasks.For this, we remove the pre-trained prediction head and attach a zero-initialized $D \times$ K$ feedforward layer, where $K$ is the number of downstream classes.
