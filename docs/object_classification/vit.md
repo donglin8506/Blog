@@ -136,18 +136,19 @@ The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of
 | Learning deep transformer models for machine translation | - | Wang et al., 2019
 | Adaptive Input Representations for Neural Language Modeling | - | Baevski & Auli, 2019
 
+$$
+a = b + c
+$$
 
 $$ 
 \begin{align}
-\mathbf{z}_0 &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \
+\mathbf{z}_0 &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
 
+\mathbf{z}_{\ell}^{'}&=MSA(LN(\mathbf{z_{\ell-1}})) + \mathbf{z}_{\ell-1} \qquad \qquad \qquad \qquad \quad \, \ell=1 \cdots L \\
 
-\mathbf{z}_{\ell}^{'}&=MSA(LN(\mathbf{z_{\ell-1}})) + \mathbf{z}_{\ell-1} \qquad \qquad \qquad \qquad \quad \, \ell=1 \cdots L \
-
-\mathbf{z}_{\ell}&=MLP(LN(\mathbf{z}_{\ell}^{'})) + \mathbf{z}_{\ell}^{'} \qquad \qquad  \qquad \qquad \qquad \quad  \ell=1 \cdots L \
+\mathbf{z}_{\ell}&=MLP(LN(\mathbf{z}_{\ell}^{'})) + \mathbf{z}_{\ell}^{'} \qquad \qquad  \qquad \qquad \qquad \quad  \ell=1 \cdots L \\
 
 \mathbf{y}&=LN(\mathbf{z}_{L}^0)
-
 \end{align} 
 $$
 
