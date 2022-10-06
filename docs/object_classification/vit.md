@@ -112,4 +112,39 @@ In model design we follow the original Transformer (Vaswani et al., 2017) as clo
 
 #### 3.1 Vision Transformer (ViT)
 
-An overview of the model is depicted in Figure 1. 
+An overview of the model is depicted in Figure 1. The standard Transformer receives as input a 1D sequence of token embeddings. To handle 2D images, we reshape the image $\mathbf{x} \in \Bbb R^{H \times W \times C}$ into a sequence of flattened 2D patches $\mathbf{x}_{p} \in \Bbb {R}^{N \times (P^2 \cdot C)}$, where $(H,W)$ is the resolution of the original image, $C$ is the number of channels, $(P,P)$ is the resolution of each image patch, and $N=HW/P^2$ is the resulting number of patches, which also serves as the effective input sequence length for the Transformer. The Transformer uses constant latent vector size D through all of its layers, so we flatten the patches and map to $D$ dimensions with a trainable linear projection (公式1). We refer to the output of this projection as the patch embeddings.
+
+
+公式1 : 
+$$
+\mathbf{z}_0 = [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D}
+$$
+
+
+Similar to BERT's [class] token, we prepend（预先准备） a learnable embedding to the sequence of embedded patches ($\mathbf{z_0^0}=\mathbf{x}_{class}$), whose state at the output of the Transformer encoder $(\mathbf{z_L^0})$ serves as the image representation $\mathbf{y}$ (见公式4). Both during pre-training and fine-tuning, a classification head is attached to $\mathbf{y}$. The classification head is implemented by a MLP with one hidden layer at pre-training time and by a single linear layer at fine-tuning time.
+
+Position embeddings are added to the patch embeddings to retain positional information. We use standard learnable 1D position embeddings, since we have not observed significant performance gains from using more advanced 2D-aware position embeddings (Appendix D.4). The resulting sequence of embedding vectors serves as input to the encoder.
+
+
+The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of multiheaded selfattention (MSA, see Appendix A) and MLP blocks (Eq. 2, 3). Layernorm (LN) is applied before every block, and residual connections after every block (Wang et al., 2019; Baevski & Auli, 2019).The MLP contains two layers with a GELU non-linearity.
+
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| Attention is All You Need | Transformer | Vaswani et al., 2017
+| Learning deep transformer models for machine translation | - | Wang et al., 2019
+| Adaptive Input Representations for Neural Language Modeling | - | Baevski & Auli, 2019
+
+
+$$
+\begin{align}
+\mathbf{z}_0 &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
+
+\mathbf{z}_{\ell}^{'}&=MSA(LN(\mathbf{z_{\ell-1}})) + \mathbf{z}_{\ell-1} \qquad \qquad \qquad \qquad \quad \, \ell=1 \cdots L \\
+
+\mathbf{z}_{\ell}&=MLP(LN(\mathbf{z}_{\ell}^{'})) + \mathbf{z}_{\ell}^{'} \qquad \qquad  \qquad \qquad \qquad \quad  \ell=1 \cdots L \\
+
+\mathbf{y}&=LN(\mathbf{z}_{L}^0)
+
+\end{align}
+$$
