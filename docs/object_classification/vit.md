@@ -4,6 +4,7 @@
 readpaper地址: https://readpaper.com/pdf-annotate/note?pdfId=4666805048735449089&noteId=737652127941750784
 
 
+
 ## Abstract
 
 While the Transformer architecture has become the de-facto(事实上) standard for natural language processing tasks, its applications to computer vision remain limited. In vision, attention is either applied in conjunction with convolutional networks, or used to replace certain components of convolutional networks while keeping their overall structure in place. We show that this reliance on CNNs is not necessary and a pure transformer applied directly to sequences of image patches can perform very well on image classification tasks. When pre-trained on large amounts of data and transferred to multiple mid-sized or small image recognition benchmarks (ImageNet, CIFAR-100, VTAB, etc.), Vision Transformer (ViT) attains excellent results compared to state-of-the-art convolutional networks while requiring substantially fewer computational resources to train.
@@ -136,19 +137,14 @@ The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of
 | Learning deep transformer models for machine translation | - | Wang et al., 2019
 | Adaptive Input Representations for Neural Language Modeling | - | Baevski & Auli, 2019
 
-$$
-a = b + c
-$$
+
 
 $$ 
 \begin{align}
-\mathbf{z}_0 &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
-
-\mathbf{z}_{\ell}^{'}&=MSA(LN(\mathbf{z_{\ell-1}})) + \mathbf{z}_{\ell-1} \qquad \qquad \qquad \qquad \quad \, \ell=1 \cdots L \\
-
-\mathbf{z}_{\ell}&=MLP(LN(\mathbf{z}_{\ell}^{'})) + \mathbf{z}_{\ell}^{'} \qquad \qquad  \qquad \qquad \qquad \quad  \ell=1 \cdots L \\
-
-\mathbf{y}&=LN(\mathbf{z}_{L}^0)
+     \mathbf{z}_{0} &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
+     \mathbf{z}^{'}_{\ell} &= MSA(LN(\mathbf{z_{\ell-1}})) + \mathbf{z}_{\ell-1} \qquad \qquad \qquad \qquad \quad \qquad \ell=1 \cdots L \\
+     \mathbf{z}_{\ell} &= MLP(LN(\mathbf{z}^{'}_{\ell})) + \mathbf{z}^{'}_{\ell} \qquad \qquad \qquad \qquad \qquad \qquad \quad  \ell=1 \cdots L \\
+     \mathbf{y} &= LN(\mathbf{z}_{L}^0)
 \end{align} 
 $$
 
