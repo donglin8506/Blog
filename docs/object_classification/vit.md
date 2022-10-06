@@ -136,7 +136,7 @@ The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of
 | Adaptive Input Representations for Neural Language Modeling | - | Baevski & Auli, 2019
 
 
-$$
+$
 \begin{align}
 \mathbf{z}_0 &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
 
@@ -147,7 +147,7 @@ $$
 \mathbf{y}&=LN(\mathbf{z}_{L}^0)
 
 \end{align}
-$$
+$
 
 
 **Inductive bias.** We note that Vision Transformer has much less image-specific inductive bias than CNNs.In CNNs, locality, two-dimensional neighborhood structure, and translation equivariance are baked into each layer throughout the whole model.In ViT, only MLP layers are local and translationally equivariant, while the self-attention layers are global.The two-dimensional neighborhood structure is used very sparingly: in the beginning of the model by cutting the image into patches and at fine-tuning time for adjusting the position embeddings for images of different resolution (as described below). Other than that, the position embeddings at initialization time carry no information about the 2D positions of the patches and all spatial relations between the patches have to be learned from scratch.
