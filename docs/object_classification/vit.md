@@ -116,6 +116,7 @@ An overview of the model is depicted in Figure 1. The standard Transformer recei
 
 
 公式1 : 
+
 $$
 \mathbf{z}_0 = [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D}
 $$
