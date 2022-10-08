@@ -125,3 +125,17 @@ Model re-parametrization techniques [71, 31, 75, 19, 33, 11, 4, 24, 13, 12, 10, 
 
 #### 2.3 Model scaling
 
+Model scaling [72, 60, 74, 73, 15, 16, 2, 51] is a way to scale up or down an already designed model and make it fit in different computing devices.The model scaling method usually uses different scaling factors, such as resolution (size of input image), depth (number of layer), width (number of channel), and stage (number of feature pyramid), so as to achieve a good trade-off for the amount of network parameters, computation, inference speed, and accuracy.Network architecture search (NAS) is one of the commonly used model scaling methods. NAS can automatically search for suitable scaling factors from search space without defining too complicated rules.The disadvantage of NAS is that it requires very expensive computation to complete the search for model scaling factors. In [15], the researcher analyzes the relationship between scaling factors and the amount of parameters and operations, trying to directly estimate some rules, and thereby obtain the scaling factors required by model scaling. Checking the literature, we found that almost all model scaling methods analyze individual scaling factor independently, and even the methods in the compound scaling category also optimized scaling factor independently.The reason for this is because most popular NAS architectures deal with scaling factors that are not very correlated.We observed that all concatenationbased models, such as DenseNet [32] or VoVNet [39], will change the input width of some layers when the depth of such models is scaled. Since the proposed architecture is concatenation-based, we have to design a new compound scaling method for this model.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [72] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks | EfficientNet | 2019-05-24
+| [60] Designing Network Design Spaces | - | 2020-03-30
+| [74] EfficientDet: Scalable and Efficient Object Detection | EfficientDet | 2019-11-20
+| [73] EfficientNetV2: Smaller Models and Faster Training | EfficientNetV2 | 2021-04-01
+| [15] Fast and Accurate Model Scaling | - | 2021-03-11
+| [16] Simple Training Strategies and Model Scaling for Object Detection | - | 2021-06-30
+| [2] Revisiting ResNets: Improved Training and Scaling Strategies | - | 2021-12-06
+| [51] Swin Transformer V2: Scaling up Capacity and Resolution | SwinTransformerV2 | 2021-11-18
+| [32] Densely Connected Convolutional Networks | DenseNet | 2016-08-25
+| [39] An Energy and GPU-Computation Efficient Backbone Network for Real-Time Object Detection | VoVNet | 2019-04-22 
