@@ -47,4 +47,17 @@ In recent years, the real-time object detector is still developed for different 
 | [87] Deep Layer Aggregation | DLA | 2017-07-20
 | [80] CSPNet: A New Backbone that can Enhance Learning Capability of CNN | CSPNet | 2019-11-27
 
-Recently, model re-parameterization [13,12,29] and dynamic label assignment [20,17,42] have become important topics in network training and object detection.
+Recently, model re-parameterization [13,12,29] and dynamic label assignment [20,17,42] have become important topics in network training and object detection.Mainly after the above new concepts are proposed, the training of object detector evolves many new issues. In this paper, we will present some of the new issues we have discovered and devise(设计) effective methods to address them.For model reparameterization, we analyze the model re-parameterization strategies applicable to layers in different networks with the concept of gradient propagation path, and propose planned re-parameterized model.In addition, when we discover that with dynamic label assignment technology, the training of model with multiple output layers will generate new issues. That is: "How to assign dynamic targets for the outputs of different branches?" For this problem, we propose a new label assignment method called coarse-to-fine(从粗到细) lead guided label assignment.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [13] RepVGG: Making VGG-style ConvNets Great Again | RepVGG | 2021-01-11
+| [12] Diverse Branch Block: Building a Convolution as an Inception-like Unit | - | 2021-06-01
+| [29] Online Convolutional Re-parameterization | - | - 
+| [20] OTA: Optimal Transport Assignment for Object Detection | OTA | 2021-03-26
+| [17] TOOD: Task-aligned One-stage Object Detection | TOOD | -
+| [42] A Dual Weighting Label Assignment Scheme for Object Detection | - 
+
+
+The contributions of this paper are summarized as follows: (1)we design several trainable bag-of-freebies methods, so that real-time object detection can greatly improve the detection accuracy without increasing the inference cost; (2) for the evolution of object detection methods, we found two new issues, namely how re-parameterized module replaces original module, and how dynamic label assignment strategy deals with assignment to different output layers.In addition, we also propose methods to address the difficulties arising from these issues;(3) we propose "extend" and "compound scaling" methods for the real-time object detector that can effectively utilize parameters and computation; and (4) the method we proposed can effectively reduce about 40% parameters and 50% computation of state-of-the-art real-time object detector, and has faster inference speed and higher detection accuracy.
+
