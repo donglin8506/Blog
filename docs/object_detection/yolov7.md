@@ -8,7 +8,7 @@ readpaper地址: https://readpaper.com/pdf-annotate/note?pdfId=46669724152433377
 YOLOv7 surpasses all known object detectors in both speed and accuracy in the range from 5 FPS to 160 FPS and has the highest accuracy **56.8% AP** among all known real-time object detectors with **30 FPS or higher on GPU V100**. YOLOv7-E6 object detector (56 FPS V100, 55.9% AP) outperforms both transformer-based detector SWINL Cascade-Mask R-CNN (9.2 FPS A100, 53.9% AP) by 509% in speed and 2% in accuracy, and convolutionalbased detector ConvNeXt-XL Cascade-Mask R-CNN (8.6 FPS A100, 55.2% AP) by 551% in speed and 0.7% AP in accuracy, as well as YOLOv7 outperforms: YOLOR, YOLOX, Scaled-YOLOv4, YOLOv5, DETR, Deformable DETR, DINO-5scale-R50, ViT-Adapter-B and many other object detectors in speed and accuracy.Moreover, we train YOLOv7 only on MS COCO dataset from scratch without using any other datasets or pre-trained weights. Source code is released in https:// github.com/ WongKinYiu/ yolov7.
 
 
-## Introduction
+## 1 Introduction
 
 Real-time object detection is a very important topic in computer vision, as it is often a necessary component in computer vision systems. For example, multi-object tracking[94,93], autonomous driving [40,18], robotics [35,58], medical image analysis [34,46], etc. The computing devices that execute real-time object detection is usually some mobile CPU or GPU, as well as various neural processing units (NPU) developed by major manufacturers. For example, the Apple neural engine (Apple), the neural compute stick (Intel), Jetson AI edge devices (Nvidia), the edge TPU (Google), the neural processing engine (Qualcomm), the AI processing unit (MediaTek), and the AI SoCs (Kneron), are all NPUs.Some of the above mentioned edge devices focus on speeding up different operations such as vanilla convolution, depth-wise convolution, or MLP operations.In this paper, the real-time object detector we proposed mainly hopes that it can support both mobile GPU and GPU devices from the edge to the cloud.
 
@@ -61,3 +61,42 @@ Recently, model re-parameterization [13,12,29] and dynamic label assignment [20,
 
 The contributions of this paper are summarized as follows: (1)we design several trainable bag-of-freebies methods, so that real-time object detection can greatly improve the detection accuracy without increasing the inference cost; (2) for the evolution of object detection methods, we found two new issues, namely how re-parameterized module replaces original module, and how dynamic label assignment strategy deals with assignment to different output layers.In addition, we also propose methods to address the difficulties arising from these issues;(3) we propose "extend" and "compound scaling" methods for the real-time object detector that can effectively utilize parameters and computation; and (4) the method we proposed can effectively reduce about 40% parameters and 50% computation of state-of-the-art real-time object detector, and has faster inference speed and higher detection accuracy.
 
+
+## 2 Related work
+
+#### 2.1 Real-time object detectors
+
+Currently state-of-the-art real-time object detectors are mainly based on YOLO [61, 62, 63] and FCOS [76, 77], which are [3, 79, 81, 21, 54, 85, 23].Being able to become a state-of-the-art real-time object detector usually requires the following characteristics:(1) a faster and stronger network architecture;(2) a more effective feature integration method [22, 97, 37, 74, 59, 30, 9, 45];(3) a more accurate detection method [76, 77, 69]; (4) a more robust loss function [96, 64, 6, 56, 95, 57]; (5) a more efficient label assignment method [99, 20, 17, 82, 42];
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [61] You Only Look Once: Unified, Real-Time Object Detection | YOLO | -
+| [62] YOLO9000: Better, Faster, Stronger | YOLO9000 | 2017-07-21
+| [63] YOLOv3: An Incremental Improvement | YOLOv3 | 2018-04-08
+| [76] FCOS: Fully Convolutional One-Stage Object Detection | FCOS | 2019-04-02
+| [77] FCOS: A simple and strong anchor-free object detector | FCOS | 2020-06-14
+| [3] YOLOv4: Optimal Speed and Accuracy of Object Detection | YOLOv4 | 2020-04-23
+| [79] Scaled-YOLOv4: Scaling Cross Stage Partial Network | Scaled-YOLOv4 | 2020-11-16
+| [81] You Only Learn One Representaion: Unified Network for Multiple Tasks. | YOLOR | 2021-05-10
+| [21] YOLOX: Exceeding(超出) YOLO Series in 2021 | YOLOX | 2021-07-18
+| [85] PP-YOLOE: An evolved version of YOLO | PP-YOLOE | -
+| [22] NAS-FPN: Learning Scalable Feature Pyramid Architecture for Object Detection | NAS-FPN | 2019-04-16
+| [97] Objects as Points | CenterNet | 2019-04-16
+| [37] Panoptic Feature Pyramid Networks | - | 2019-01-08
+| [74] EfficientDet: Scalable and Efficient Object Detection | EfficientDet | 2019-11-20
+| [59] DetectoRS: Detecting Objects with Recursive Feature Pyramid and Swithchable Atrous Convolution | DetectoRS | 2021-06-01
+| [30] A2-FPN: Attention Aggregation based Feature Pyramid Network for Instance Segmentation | A2-FPN | 2021-06-01
+| [9] Dynamic Head: Unifying Object Detection Heads with Attentions | - | 2021-06-15
+| [45] Exploring Plain Vision Transformer Backbones for Object Detection | - | -
+| [69] Sparse R-CNN: End-to-End Object Detection with Learnable Proposals | - | 2021-06-01
+| [96] IoU Loss for 2D/3D Object Detection | - | -
+| [64] Generalized Intersection over Union: A Metric and A Loss fro Bounding Box Regression | - | 2019-02-25
+| [6] AP-Loss for Accurate One-Stage Object Detection | - | 2021-11-01
+| [56] A Ranking-based, Balanced Loss Function Unifying Classification and Localisation in Object Detection | - | 2020-09-28
+| [95] Distance-IoU Loss: Faster and Better Learning for Bounding Box Regression | - | 2019-11-19
+| [57] Rank & Sort Loss for Object Detection and Instance Segmentation | - | 2021-07-24
+| [99] AutoAssign: Differentiable Label Assignment for Dense Object Detection | AutoAssign | 2020-07-07
+| [20] OTA: Optimal Transport Assignment for Object Detection | OTA | 2021-03-26
+| [17] TOOD: Task-aligned One-stage Object Detection | TOOD | -
+| [42] A Dual(双重的) Weighting Label Assignment Scheme for Object Detection | - 
+| [82] End-to-End Object Detection with Fully Convolutional Network | - | 2020-12-07
