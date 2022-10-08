@@ -138,7 +138,6 @@ The Transformer encoder (Vaswani et al., 2017) consists of alternating layers of
 | Adaptive Input Representations for Neural Language Modeling | - | Baevski & Auli, 2019
 
 
-
 $$ 
 \begin{align}
      \mathbf{z}_{0} &= [\mathbf{x}_{class};\, \mathbf{x}_{p}^{1} \mathbf{E}; \, \mathbf{x}_{p}^{2} \mathbf{E}; \, \cdots, \, \mathbf{x}_{p}^{N} \mathbf{E}] + \mathbf{E}_{pos} \qquad \qquad \mathbf{E} \in \Bbb{R}^{(P^2 \cdot C) \times D}, \, \mathbf{E}_{pos} \in \Bbb{R}^{(N+1) \times D} \\
@@ -155,4 +154,10 @@ $$
 
 #### 3.2 Fine-Tuning And Higher Resolution
 
-Typically, we pre-train ViT on large datasets, and fine-tune to (smaller) downstream tasks.For this, we remove the pre-trained prediction head and attach a zero-initialized $D \times$ K$ feedforward layer, where $K$ is the number of downstream classes.
+Typically, we pre-train ViT on large datasets, and fine-tune to (smaller) downstream tasks.For this, we remove the pre-trained prediction head and attach a zero-initialized $D \times$ K$ feedforward layer, where $K$ is the number of downstream classes.It is often beneficial to fine-tune at higher resolution than pre-training (Touvron et al., 2019; Kolesnikov et al., 2020). 
+When feeding images of higher resolution, we keep the patch size the same, which results in a larger effective sequence length.The Vision Transformer can handle arbitrary sequence lengths (up to memory constraints),however, the pre-trained position embeddings may no longer be meaningful.We therefore perform 2D interpolation of the pre-trained position embeddings, according to their location in the original image.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| Fixing the train-test resolution discrepancy | - | Touvron et al., 2019
+| BiT transfer(BiT): General visual representation learning | BiT | Kolesnikov et al., 2020
