@@ -66,7 +66,7 @@ The contributions of this paper are summarized as follows: (1)we design several 
 
 #### 2.1 Real-time object detectors
 
-Currently state-of-the-art real-time object detectors are mainly based on YOLO [61, 62, 63] and FCOS [76, 77], which are [3, 79, 81, 21, 54, 85, 23].Being able to become a state-of-the-art real-time object detector usually requires the following characteristics:(1) a faster and stronger network architecture;(2) a more effective feature integration method [22, 97, 37, 74, 59, 30, 9, 45];(3) a more accurate detection method [76, 77, 69]; (4) a more robust loss function [96, 64, 6, 56, 95, 57]; (5) a more efficient label assignment method [99, 20, 17, 82, 42];
+Currently state-of-the-art real-time object detectors are mainly based on YOLO [61, 62, 63] and FCOS [76, 77], which are [3, 79, 81, 21, 54, 85, 23].Being able to become a state-of-the-art real-time object detector usually requires the following characteristics:(1) a faster and stronger network architecture;(2) a more effective feature integration method [22, 97, 37, 74, 59, 30, 9, 45];(3) a more accurate detection method [76, 77, 69]; (4) a more robust loss function [96, 64, 6, 56, 95, 57]; (5) a more efficient label assignment method [99, 20, 17, 82, 42];and (6) a more efficient training method.In this paper, we do not intend to explore self-supervised learning or knowledge distillation methods that require additional data or large model.Instead, we will design new trainable bag-of-freebies method for the issues derived from the state-of-the-art methods associated with (4), (5), and (6) mentioned above.
 
 | 论文名称 | 论文别名 | 论文时间
 | :------- | :------ | :--------
@@ -100,3 +100,28 @@ Currently state-of-the-art real-time object detectors are mainly based on YOLO [
 | [17] TOOD: Task-aligned One-stage Object Detection | TOOD | -
 | [42] A Dual(双重的) Weighting Label Assignment Scheme for Object Detection | - 
 | [82] End-to-End Object Detection with Fully Convolutional Network | - | 2020-12-07
+
+#### 2.2 Model re-parameterization
+
+Model re-parametrization techniques [71, 31, 75, 19, 33, 11, 4, 24, 13, 12, 10, 29, 14, 78] merge multiple computational modules into one at inference stage.The model re-parameterization technique can be regarded as an ensemble technique, and we can divide it into two categories, i.e., module-level ensemble and model-level ensemble.There are two common practices for model-level reparameterization to obtain the final inference model.One is to train multiple identical models with different training data, and then average the weights of multiple trained models.The other is to perform a weighted average of the weights of models at different iteration number.Modulelevel re-parameterization is a more popular research issue recently. This type of method splits a module into multiple identical or different module branches during training and integrates multiple branched modules into a completely equivalent module during inference.However, not all proposed re-parameterized module can be perfectly applied to different architectures. With this in mind, we have developed new re-parameterization module and designed related application strategies for various architectures.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [71] Rethinking the Inception Architecture for Computer Vision | - | 2015-12-02
+| [31] Snapshot Ensembles: Train 1, Get M for Free | - | 2017-04-01
+| [75] Mean teachers are better role models: Weight-averaged consistency targets improve semi-supervised deep learning results | - | 2017-01-01
+| [19] Loss Surfaces, Mode Connectivity, and Fast Ensembling of DNNs | - | 2018-02-27
+| [33] Averaging Weights Leads to Wider Optima and Better Generalization | - | 2018-03-14
+| [11] ACNet: Strengthening the Kernel Skeletons for Powerful CNN via Asymmetric Convolution Blocks | ACNet | 2019-08-11
+| [4] Ensemble deep learning in bioinformatics | - | 2020-08-17
+| [24] ExpandNets: Linear Over-parameterization to Train Compact Convolutional Networks | ExpandNets | 2018-11-26
+| [13] RepVGG: Making VGG-style ConvNets Great Again | RepVGG | 2021-01-11
+| [12] Diverse Branch Block: Building a Convolution as an Inception-like Unit | - | 2021-06-01
+| [10] Re-parameterizing Your Optimizers rather than Architectures | - | 2022-05-30
+| [29] Online Convolutional Re-parameterization | - | -
+| [14] Scaling Up Your Kernels to 31x31: Revisiting Large Kernel Design in CNNs | - | -
+| [78] An Improved One millisecond Mobile Backbone | - | -
+
+
+#### 2.3 Model scaling
+
