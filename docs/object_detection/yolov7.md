@@ -180,3 +180,72 @@ The above methods are mainly used in architectures such as PlainNet or ResNet.Wh
 
 
 It can be inferred from the above phenomenon that(从以上现象不难推理出) we cannot analyze different scaling factors separately for a concatenation-based model but must be considered together.Take scaling-up depth as an example, such an action will cause a ratio change between the input channel and output channel of a transition layer, which may lead to a decrease in the hardware usage of the model.Therefore, we must propose the corresponding compound model scaling method for a concatenation-based model.When we scale the depth factor of a computational block, we must also calculate the change of the output channel of that block.Then, we will perform width factor scaling with the same amount of change on the transition layers, and the result is shown in Figure 3 (c).Our proposed compound scaling method can maintain the properties that the model had at the initial design and maintains the optimal structure.
+
+## 4. Trainable bag-of-freebies
+
+#### 4.1 Planned re-parameterized convolution
+
+Although RepConv [13] has achieved excellent performance on the VGG [68], when we directly apply it to ResNet [26] and DenseNet [32] and other architectures, its accuracy will be significantly reduced(减少).We use gradient flow propagation paths(梯度流传播路径) to analyze how re-parameterized convolution should be combined with different network.We also designed planned re-parameterized convolution accordingly.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [13] RepVGG: Making VGG-style ConvNets Great Again | RepVGG | 2021-01-11
+| [68] Very deep convolutional networks for large-scale image recognition | VGG | 2015-01-01
+| [26] Deep Residual Learning for Image Recognition | ResNet | 2015-12-10
+| [32] Densely Connected Convolutional Networks | DenseNet | 2016-08-25
+
+
+RepConv actually combines 3 × 3 convolution, 1 × 1convolution, and identity connection in one convolutional layer.RepConv actually combines 3 × 3 convolution, 1 × 1convolution, and identity connection in one convolutional layer. After analyzing the combination and corresponding performance of RepConv and different architectures, we find that the identity connection in RepConv destroys the residual in ResNet and the concatenation in DenseNet, which provides more diversity of gradients for different feature maps. For the above reasons, we use RepConv without identity connection (RepConvN) to design the architecture of planned re-parameterized convolution.In our thinking, when a convolutional layer with residual or concatenation is replaced by re-parameterized convolution, there should be no identity connection.Figure 4 shows an example of our designed "planned re-parameterized convolution" used in PlainNet and ResNet. As for the complete planned re-parameterized convolution experiment in residual-based model and concatenation-based model, it will be presented in the ablation study session.
+
+
+#### 4.2 Coarse for auxiliary(辅助) and fine for lead loss
+
+Deep supervision [38] is a technique that is often used in training deep networks. Its main concept is to add extra auxiliary head in the middle layers of the network, and the shallow network weights with assistant loss as the guide.Even for architectures such as ResNet [26] and DenseNet [32] which usually converge well, deep supervision [70, 98, 67, 47, 82, 65, 86, 50] can still significantly improve the performance of the model on many tasks.Figure 5 (a) and (b) show, respectively, the object detector architecture "without" and "with" deep supervision.In this paper, we call the head responsible for the final output as the lead head, and the head used to assist（助攻） training is called auxiliary(辅助) head.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [38] Deeply-Supervised Nets | - | 2014-09-18
+| [26] Deep Residual Learning for Image Recognition | ResNet | 2015-12-10
+| [32] Densely Connected Convolutional Networks | DenseNet | 2016-08-25
+| [70] Going Deeper with Convolutions | - | -
+| [98] UNet++: A Nested U-Net Architecture for Medical image Segmentation | UNet++ | 2018-07-18
+| [67] Object Detection from Scratch with Deep Supervision | DSOD | 2018-09-25
+| [47] CBNetV2: A Composite Backbone Network Architecture for Object Detection | CBNetV2 | 2021-07-01
+| [82] End-to-End Object Detection with Fully Convolutional Network | POTO | 2020-12-07
+| [65] Sparse DETR: Efficient End-to-End Object Detection with Learnable Sparsity | Sparse DETR | 2021-11-29
+| [86] 3D-MAN: 3D Multi-frame Attention Network for Object Detection | 3D-MAN | 2021-06-01
+| [50] YOLOStereo3D: A Step Back to 2D for Efficient Stereo 3D Detection | YOLOStereo3D | 2021-05-30
+
+
+Next we want to discuss the issue of label assignment. In the past, in the training of deep network, label assignment usually refers directly to the ground truth and generate hard label according to the given rules. However, in recent years, if we take object detection as an example, researchers often use the quality and distribution of prediction output by the network, and then consider together with the ground truth to use some calculation and optimization methods to generate a reliable soft label [61, 8, 36, 99, 91, 44, 43, 90, 20, 17, 42].For example, YOLO [61] use IoU of prediction of bounding box regression and ground truth as the soft label of objectness.In this paper, we call the mechanism that considers the network prediction results together with the ground truth and then assigns soft labels as "label assigner."
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [61] You Only Look Once: Unified, Real-Time Object Detection | YOLO | -
+| [8] Gaussian YOLOv3: An Accurate and Fast Object Detector Using Localization Uncertainty for Autonomous Driving | Gaussian YOLOv3 | 2019-04-09
+| [36] Probabilistic Anchor Assignment with IoU Prediction for Object Detection | - | 2020-07-16
+| [99] AutoAssign: Differentiable Label Assignment for Dense Object Detection | AutoAssign | 2020-07-07
+| [91] Bridging the Gap Between Anchor-based and Anchor-free Detection via Adaptive Training Sample Selection | - | 2019-12-05
+| [44] Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection | - | 2020-06-08
+| [43] Generalized Focal Loss V2: Learning Reliable Localization Quality Estimation for Dense Object Detection | - | 2020-11-25
+| [90] VarifocalNet: An IoU-aware Dense Object Detector | VarifocalNet | 2020-08-31
+| [20] OTA: Optimal Transport Assignment for Object Detection | OTA | 2021-03-26
+| [17] TOOD: Task-aligned One-stage Object Detection | TOOD | -
+| [42] A Dual(双重的) Weighting Label Assignment Scheme for Object Detection | - 
+
+
+Deep supervision needs to be trained on the target objectives regardless of the circumstances of auxiliary head or lead head.During the development of soft label assigner related techniques, we accidentally discovered a new derivative issue, i.e., "How to assign soft label to auxiliary head and lead head ?" To the best of our knowledge, the relevant literature has not explored this issue so far. The results of the most popular method at present is as shown in Figure 5 (c), which is to separate auxiliary head and lead head, and then use their own prediction results and the ground truth to execute label assignment.The method proposed in this paper is a new label assignment method that guides both auxiliary head and lead head by the lead head prediction.In other words, we use lead head prediction as guidance to generate coarse-to-fine hierarchical labels, which are used for auxiliary head and lead head learning, respectively. The two proposed deep supervision label assignment strategies are shown in Figure 5 (d) and (e), respectively.
+
+
+**Lead head guided label assigner** is mainly calculated based on the prediction result of the lead head and the ground truth, and generate soft label through the optimization process.This set of soft labels will be used as the target training model for both auxiliary head and lead head.The reason to do this is because lead head has a relatively strong learning capability, so the soft label generated from it should be more representative of the distribution and correlation between the source data and the target.Furthermore, we can view such learning as a kind of generalized residual learning. By letting the shallower auxiliary head directly learn the information that lead head has learned, lead head will be more able to focus on learning residual information that has not yet been learned.
+
+**Coarse-to-fine lead head guided label assigner** also used the predicted result of the lead head and the ground truth to generate soft label.However, in the process we generate two different sets of soft label, i.e., coarse label and fine label, where fine label is the same as the soft label generated by lead head guided label assigner, and coarse label is generated by allowing more grids to be treated as positive target by relaxing the constraints of the positive sample assignment process. The reason for this is that the learning ability of an auxiliary head is not as strong as that of a lead head, and in order to avoid losing the information that needs to be learned, we will focus on optimizing the recall of auxiliary head in the object detection task. As for the output of lead head, we can filter the high precision results from the high recall results as the final output.However, we must note that if the additional weight of coarse label is close to that of fine label, it may produce bad prior at final prediction.Therefore, in order to make those extra coarse positive grids have less impact, we put restrictions in the decoder, so that the extra coarse positive grids cannot produce soft label perfectly. The mechanism mentioned above allows the importance of fine label and coarse label to be dynamically adjusted during the learning process, and makes the optimizable upper bound of fine label always higher than coarse label.
+
+#### 4.3 Other trainable bag-of-freebies
+
+In this section we will list some trainable bag-offreebies. These freebies are some of the tricks we used in training, but the original concepts were not proposed by us.The training details of these freebies will be elaborated in the Appendix, including (1) Batch normalization in conv-bn-activation topology: This part mainly connects batch normalization layer directly to convolutional layer. The purpose of this is to integrate the mean and variance of batch normalization into the bias and weight of convolutional layer at the inference stage.(2) Implicit knowledge in YOLOR [81] combined with convolution feature map in addition and multiplication manner: Implicit knowledge in YOLOR can be simplified to a vector by pre-computing at the inference stage. This vector can be combined with the bias and weight of the previous or subsequent convolutional layer. (3) EMA model: EMA is a technique used in mean teacher [75], and in our system we use EMA model purely as the final inference model.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [81] You Only Learn One Representaion: Unified Network for Multiple Tasks. | YOLOR | 2021-05-10
+| [75] Mean teachers are better role models: Weight-averaged consistency targets improve semi-supervised deep learning results | - | 2017-01-01
