@@ -3,6 +3,14 @@
 
 readpaper地址: https://readpaper.com/pdf-annotate/note?pdfId=4666972415243337729&noteId=729490235758215168
 
+
+关键词: 
+
+- 梯度分析 gradient analysis
+
+- transition layers 
+
+
 ## Abstract 
 
 YOLOv7 surpasses all known object detectors in both speed and accuracy in the range from 5 FPS to 160 FPS and has the highest accuracy **56.8% AP** among all known real-time object detectors with **30 FPS or higher on GPU V100**. YOLOv7-E6 object detector (56 FPS V100, 55.9% AP) outperforms both transformer-based detector SWINL Cascade-Mask R-CNN (9.2 FPS A100, 53.9% AP) by 509% in speed and 2% in accuracy, and convolutionalbased detector ConvNeXt-XL Cascade-Mask R-CNN (8.6 FPS A100, 55.2% AP) by 551% in speed and 0.7% AP in accuracy, as well as YOLOv7 outperforms: YOLOR, YOLOX, Scaled-YOLOv4, YOLOv5, DETR, Deformable DETR, DINO-5scale-R50, ViT-Adapter-B and many other object detectors in speed and accuracy.Moreover, we train YOLOv7 only on MS COCO dataset from scratch without using any other datasets or pre-trained weights. Source code is released in https:// github.com/ WongKinYiu/ yolov7.
@@ -139,3 +147,36 @@ Model scaling [72, 60, 74, 73, 15, 16, 2, 51] is a way to scale up or down an al
 | [51] Swin Transformer V2: Scaling up Capacity and Resolution | SwinTransformerV2 | 2021-11-18
 | [32] Densely Connected Convolutional Networks | DenseNet | 2016-08-25
 | [39] An Energy and GPU-Computation Efficient Backbone Network for Real-Time Object Detection | VoVNet | 2019-04-22 
+
+
+## 3. Architecture
+
+#### 3.1 Extended efficient layer aggregation networks
+
+In most of the literature on designing the efficient architectures, the main considerations are no more than(不外乎是) the number of parameters, the amount of computation, and the computational density.Starting from the characteristics of memory access cost(内存访问成本), Ma et al. [55] also analyzed the influence of the input/output channel ratio, the number of branches of the architecture, and the element-wise operation on the network inference speed.Doll ́ar et al. [15] additionally considered activation when performing model scaling, that is, to put more consideration on the number of elements in the output tensors of convolutional layers.The design of CSPVoVNet [79] in Figure 2 (b) is a variation of VoVNet [39]. In addition to considering the aforementioned(前述的) basic designing concerns, the architecture of CSPVoVNet [79] also analyzes the gradient path, in order to enable the weights of different layers to learn more diverse features.The gradient analysis approach described above makes inferences faster and more accurate.ELAN [1] in Figure 2 (c) considers the following design strategy – "How to design an efficient network?." They came out with a conclusion: By controlling the shortest longest gradient path, a deeper network can learn and converge effectively. In this paper, we propose Extended-ELAN (E-ELAN) based on ELAN and its main architecture is shown in Figure 2 (d).
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [55] ShuffleNet V2: Practical Guidelines for Efficient CNN Architecture Design | ShuffleNet V2 | 2018-09-08
+| [15] Fast and Accurate Model Scaling | - | 2021-03-11
+| [79] Scaled-YOLOv4: Scaling Cross Stage Partial Network | Scaled-YOLOv4 | 2020-11-16
+
+
+Regardless of(无论) the gradient path length and the stacking number of computational blocks in large-scale ELAN, it has reached a stable state.If more computational blocks are stacked unlimitedly, this stable state may be destroyed, and the parameter utilization rate will decrease.The proposed E-ELAN uses expand, shuffle, merge cardinality(基数) to achieve the ability to continuously enhance the learning ability of the network without destroying the original gradient path.In terms of architecture, E-ELAN only changes the architecture in computational block, while the architecture of transition layer is completely unchanged.Our strategy is to use group convolution to expand the channel and cardinality of computational blocks.We will apply the same group parameter and channel multiplier to all the computational blocks of a computational layer.Then, the feature map calculated by each computational block will be shuffled into g groups according to the set group parameter g, and then concatenate them together.
+
+
+#### 3.2 Model scaling for concatenation-based models
+
+The main purpose of model scaling is to adjust some attributes of the model and generate models of different scales to meet the needs of different inference speeds.For example the scaling model of EfficientNet [72] considers the width, depth, and resolution.As for the scaled-YOLOv4 [79], its scaling model is to adjust the number of stages. In [15], Doll ́ar et al. analyzed the influence of vanilla convolution and group convolution on the amount of parameter and computation when performing width and depth scaling, and used this to design the corresponding model scaling method.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
+| [72] EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks | EfficientNet | 2019-05-24
+| [79] Scaled-YOLOv4: Scaling Cross Stage Partial Network | Scaled-YOLOv4 | 2020-11-16
+| [15] Fast and Accurate Model Scaling | - | 2021-03-11
+
+
+The above methods are mainly used in architectures such as PlainNet or ResNet.When these architectures are in executing scaling up or scaling down, the in-degree and out-degree of each layer will not change, so we can independently analyze the impact of each scaling factor on the amount of parameters and computation.However, if these methods are applied to the concatenation-based architecture, we will find that when scaling up or scaling down is performed on depth, the in-degree of a translation layer which is immediately after a concatenation-based computational block will decrease or increase, as shown in Figure 3 (a) and (b).
+
+
+It can be inferred from the above phenomenon that(从以上现象不难推理出) we cannot analyze different scaling factors separately for a concatenation-based model but must be considered together.Take scaling-up depth as an example, such an action will cause a ratio change between the input channel and output channel of a transition layer, which may lead to a decrease in the hardware usage of the model.Therefore, we must propose the corresponding compound model scaling method for a concatenation-based model.When we scale the depth factor of a computational block, we must also calculate the change of the output channel of that block.Then, we will perform width factor scaling with the same amount of change on the transition layers, and the result is shown in Figure 3 (c).Our proposed compound scaling method can maintain the properties that the model had at the initial design and maintains the optimal structure.
