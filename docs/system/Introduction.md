@@ -14,6 +14,3 @@ https://www.jianshu.com/p/25f0139637b7
 
 
 ## shell相关
-
-
-ls | awk -F" " '{print $5}' | awk '{sum += $1} END {print sum}'

@@ -25,4 +25,21 @@ Video-text retrieval (VTR) is a multi-modal task, which aims to find the most re
 | [34] HiT: Hierarchical Transformer with Momentum Contrast for Video-Text Retrieval  | HiT | 2021
 | [35] Use what you have: Video retrieval using representations from collaborative experts | - | 2019
 | [38] Clip4clip: An empirical study of clip for end to end video clip retrieval | Clip4clip | 2021
+| [41] Learning joint embedding with multimodal cues for cross-modal video-text retrieval | - | 2018
+| [54] T2VLAD: Global-Local Sequence Alignment for Text-Video Retrieval | T2VLAD | 2021
+| [58] Tree-Augmented Cross-Modal Encoding for Complex-Query Video Retrieval | - | 2020
+| [61] A joint sequence fusion model for video question answering and retrieval | - | 2018
+| [63] Cross-modal and hierarchical modeling of video and text | - | 2018
+| [66] Actbert: Learning global-local video-text representations | Actbert | 2020
+| [2] Localizing Moments in Video with Natural Language | - | 2017-08-04
+| [6] ActivityNet: A large-scale video benchmark for human activity understanding | ActivityNet | 2015-06-07
+| [7] Collecting Highly Parallel Data for Paraphrase Evaluation | - | 2011-06-19
+| [45] The Long-Short Story of Movie Description | - | 2015-10-07
+| [56] MSR-VTT: A Large Video Description Dataset for Bridgin Video and Language | MSR-VTT | 2016-01-01
+
+
+Recently, with great success in large-scale contrastive languageimage pre-training, VTR has also achieved great progress. Specifically, with 400M image-text pairs for training, CLIP [ 44] can embed the images and sentences into the shared semantic space for similarity calculation.Furthermore, CLIP4Clip [ 38 ] transfers the imagetext knowledge of CLIP to the VTR task, resulting in significant performance improvements on several video-text retrieval datasets. However, CLIP and CLIP4Clip embed the whole sentence and image/video into textual and visual representations, thus lacking the ability to capture fine-grained interactions.To this end, some previous works [29 , 59 ] propose fine-grained contrastive frameworks, which consider the contrast between each word of the sentence and each frame of the video. Moreover, TACo [ 57 ] introduces tokenlevel and sentence-level loss to consider both fine-grained and coarse-grained contrast. Although they have shown promising advances on the VTR task, cross-modality semantic contrast still needs to be systematically explored.
+
+| 论文名称 | 论文别名 | 论文时间
+| :------- | :------ | :--------
 | 

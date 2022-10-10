@@ -56,13 +56,18 @@ nav:
   - 目标分类:
     - ViT: ./object_classification/vit.md
   - 视觉多模态: 
-    - 论文: 
-      - CLIP: ./VisionMultiModal/paper/CLIP.md
-      - MAE: ./VisionMultiModal/paper/MAE.md
-    - 数据集: ./VisionMultiModal/dataset.md
-    - VideoMAE: ./VisionMultiModal/VideoMAE.md
-    - MAE: 
-      - 论文详读: ./VisionMultiModal/MAE_paper.md
+    - CLIP:
+      - 论文详解: ./VisionMultiModal/CLIP/paper_interpretation.md
+      - 论文通读: ./VisionMultiModal/CLIP/paper_read.md
+      - 代码阅读: ./VisionMultiModal/CLIP/paper_code/main.md
+    - MAE:
+      - 论文详解: ./VisionMultiModal/MAE/paper_interpretation.md
+      - 论文通读: ./VisionMultiModal/MAE/paper_read.md
+      - 代码阅读: ./VisionMultiModal/MAE/paper_code/main.md
+    - X-CLIP:
+      - 论文详解: ./VisionMultiModal/X-CLIP/paper_interpretation.md
+      - 论文通读: ./VisionMultiModal/X-CLIP/paper_read.md
+      - 代码阅读: ./VisionMultiModal/X-CLIP/paper_code/main.md
   - 系统篇: 
     - Introduction.md
     - 个人简介: cuidonglin.md
