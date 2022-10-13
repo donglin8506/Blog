@@ -54,7 +54,10 @@ nav:
   - 目标检测篇:
     - yolov5: ./object_detection/ObjectDetection.md
   - 目标分类:
-    - ViT: ./object_classification/vit.md
+    - ViT:
+      - 论文详解: ./object_detection/VIT/paper_interpretation.md
+      - 论文通读: ./object_detection/VIT/paper_read.md
+      - 代码阅读: ./object_detection/VIT/paper_code/main.md
   - 视觉多模态: 
     - CLIP:
       - 论文详解: ./VisionMultiModal/CLIP/paper_interpretation.md

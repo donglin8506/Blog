@@ -14,3 +14,14 @@ https://www.jianshu.com/p/25f0139637b7
 
 
 ## shell相关
+
+
+## 网络篇
+
+在timm获取模型中碰到一个问题，加如下方式可以解决
+
+```
+import ssl 
+ssl._create_default_https_context = ssl._create_unverified_context
+```
+
