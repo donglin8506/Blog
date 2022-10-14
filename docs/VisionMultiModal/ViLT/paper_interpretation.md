@@ -23,3 +23,9 @@
 
 我们的方法之所以比之前的方法所用时间短，是因为我们的方法在图像编码分支没有使用 耗时的CNN-Backbone 或者 更耗时的RPN相关网络；仅仅使用了轻量的 Linear Embedding方法。
 
+
+
+ViLBERT: Pretraining Task-Agnostic Visiolinguistic(视觉语言学的) Representations for Vision-and-Language Tasks
+
+UNITER: Learning Universal Image-TExt Representations
+
