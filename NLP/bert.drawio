@@ -1,0 +1,94 @@
+<mxfile host="app.diagrams.net" modified="2022-10-19T03:44:15.359Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36" etag="aNxPXkUnRrQicrqsYKea" version="20.4.1" type="github">
+  <diagram id="OqDKMW7naucSAu7XxcUa" name="Page-1">
+    <mxGraphModel dx="1029" dy="645" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-2" value="句子级别&lt;br&gt;sentence-level" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="110" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-3" value="词级别&lt;br&gt;token-level" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="210" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-8" value="预测句子之间的相关性" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="200" y="125" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-9" value="命名实体识别&lt;br&gt;named entity recognition" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="230" y="190" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-10" value="问答&lt;br&gt;question answeriing" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="240" y="270" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-11" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="210" y="180" width="20" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-13" value="细粒度" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="365" y="230" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-14" value="粗粒度" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="360" y="125" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-15" value="预训练语言表征的两种方案" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="60" y="410" width="170" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-16" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="365" width="20" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-17" value="基于特征的&lt;br&gt;feature-based" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="270" y="350" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-18" value="微调型的&lt;br&gt;fine-tuning" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="270" y="460" width="80" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-21" value="ELMo" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="400" y="355" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-23" value="基于特定任务具体的结构" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="450" y="355" width="160" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-24" value="GPT" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="400" y="470" width="50" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-25" value="基本跟任务无关，通过在下游任务上轻轻地微调" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="450" y="470" width="280" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-26" value="&lt;font color=&quot;#ff0000&quot;&gt;都使用相同的目标函数和单向语言模型&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="30" y="455" width="230" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-28" value="上述方法存在的问题：&lt;br&gt;1.单向不是双向，不是最优的，例如对于句子级别任务&amp;nbsp;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#FF0000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="510" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-29" value="&lt;font color=&quot;#000000&quot;&gt;掩码形式的目标函数&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#FF0000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="600" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-30" value="&lt;font color=&quot;#000000&quot;&gt;双向学习表征&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#FF0000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-31" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="610" width="20" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-32" value="本文的创新点" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-50" y="655" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-33" value="11项NLP任务" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-50" y="860" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-34" value="" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="50" y="815" width="20" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-35" value="MNLI（Multi-Genre Natural Language Inference）" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="80" y="800" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-36" value="给两个句子，判断第二个句子和第一个句子是包含关系、矛盾关系还是中性关系" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="270" y="810" width="440" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-37" value="模型结构" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="1020" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="JwZHm2n2Mj-en1aCP-mM-38" value="多层双向Transformer编码器" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="120" y="960" width="120" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

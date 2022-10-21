@@ -1,0 +1,1735 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="崔东林的技术积累">
+      
+      
+        <meta name="author" content="崔东林">
+      
+      
+        <link rel="canonical" href="https://donglin8506.github.io/Blog/VisionMultiModal/MAE/paper_read/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+    
+    
+      
+        <title>论文通读 - 从零实现</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="从零实现" class="md-header__button md-logo" aria-label="从零实现" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            从零实现
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              论文通读
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/donglin8506/Blog" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    donglin8506/Blog
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../Mkdocs/" class="md-tabs__link">
+      mkdocs使用
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../deep_learning/transformer/" class="md-tabs__link">
+        深度学习基础篇
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../object_detection/ObjectDetection/" class="md-tabs__link">
+        目标检测篇
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../object_detection/VIT/paper_interpretation.md" class="md-tabs__link">
+        目标分类
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../CLIP/paper_interpretation/" class="md-tabs__link md-tabs__link--active">
+        视觉多模态
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../Introduction.md" class="md-tabs__link">
+        系统篇
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="从零实现" class="md-nav__button md-logo" aria-label="从零实现" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    从零实现
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/donglin8506/Blog" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    donglin8506/Blog
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Mkdocs/" class="md-nav__link">
+        mkdocs使用
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          深度学习基础篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="深度学习基础篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          深度学习基础篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deep_learning/transformer/" class="md-nav__link">
+        transformer介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deep_learning/conv2d/" class="md-nav__link">
+        手动实现卷积
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          目标检测篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="目标检测篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          目标检测篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/ObjectDetection/" class="md-nav__link">
+        yolov5
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          目标分类
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="目标分类" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          目标分类
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          ViT
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ViT" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          ViT
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_interpretation.md" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_read.md" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_code/main.md" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          视觉多模态
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="视觉多模态" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          视觉多模态
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_1">
+          CLIP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="CLIP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          CLIP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CLIP/paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CLIP/paper_read/" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CLIP/paper_code/main/" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_2">
+          MAE
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="MAE" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          MAE
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          论文通读
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        论文通读
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    相关工作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    方法
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    讨论和结论
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paper_code/main.md" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          X-CLIP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="X-CLIP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          X-CLIP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_read/" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_code/main/" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          系统篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="系统篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          系统篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Introduction.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cuidonglin/" class="md-nav__link">
+        个人简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    相关工作
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    方法
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    讨论和结论
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/donglin8506/Blog/edit/master/docs/VisionMultiModal/MAE/paper_read.md" title="编辑此页" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+  <h1>论文通读</h1>
+
+<p>论文名称：Masked Autoencoders Are Scalable Vision Learners</p>
+<p>论文地址：https://arxiv.org/abs/2111.06377</p>
+<p>readpaper地址：https://readpaper.com/pdf-annotate/note?pdfId=4556957922861522945&amp;noteId=724534621592129536</p>
+<p>论文时间：2021.11.11</p>
+<p>作者信息：Kaiming He, ..., Ross Girshick </p>
+<h2 id="_1">摘要</h2>
+<p>This paper shows that masked autoencoders(MAE) are scalable self-supervised learners for computer vision. Our MAE approach is simple: we mask random patches of the input image and reconstruct the missing pixels. It is based on two core designs. First, we develop an asymmetric encoder-decoder architecture, with an encoder that operates only on the subset of patchesss(without mask tokens), along with a lightweight decoder that reconstructs the original image from the latent representation and mask tokens. Second, we find that masking a high proportion of the input image, e.g. 75%, yields a nontrival and meaningful self-supervisory task. Coupling these two designs enables us to train large models efficiently and effectively: we accelerate training (by 3x or more) and improve accuracy. Our scalable approach allows for learning high-capacity(大容量) models that generalize well: e.g., a vanilla ViT-Huge model achieves the best accuracy(87.8%) among methods that use only ImageNet-1K data. Transfer performance in downstream tasks outperforms supervised pretraining and shows promising scaling behavior.</p>
+<h2 id="_2">引言</h2>
+<p>Deep learning has witnessed(见证了) an explosion of architectures of continuously growing capability（能做成一件事的能力） and capacity（是否能高效地完成一件事情）[AlexNet, ResNet, Transformer]. Aided by the rapid gains in hardware, models today can easily overfit one million images [ImageNet ] and begin to demand(要求，需要) hundreds of millions of - often publicly inaccessible(公众无法访问的、不易访问的) - labeled images [ViT ]. </p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">ImageNet Classification with Deep Convolutional Neural Networks</td>
+<td align="left">使用卷积神经网络做图片分类</td>
+<td align="left">AlexNet</td>
+<td align="left">2012-12-03</td>
+</tr>
+<tr>
+<td align="left">Deep Residual Learning for Image Recognition</td>
+<td align="left">使用残差学习来做图片分类</td>
+<td align="left">ResNet</td>
+<td align="left">2015-12-10</td>
+</tr>
+<tr>
+<td align="left">Attention Is All You Need</td>
+<td align="left">注意力机制是你需要的</td>
+<td align="left">Transformer</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">ImageNet: A large-scale hierarchical image database</td>
+<td align="left">一个大规模的层次的图片数据集</td>
+<td align="left">ImageNet</td>
+<td align="left">2009-06-20</td>
+</tr>
+</tbody>
+</table>
+<p>This appetite(食欲) of data has been successfully addressed in natural language processing (NLP) by self-supervised pre-training. The solutions, based on autoregressive language modeling in GPT and masked autoencdoing in BERT, are conceptually(概念上) simple: they remove a portion of the data and learn to predict the removed content. These methods now enable training of generalizable（具有泛化性的）NLP models containing over one hundred of billion parameters. </p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Improving Language Understanding by Generative Pre-Training</td>
+<td align="left">使用生成式的预训练方式来提升语言理解</td>
+<td align="left">GPT</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督多任务的学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">2020-05-28</td>
+</tr>
+<tr>
+<td align="left">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</td>
+<td align="left">深度双向Transformers的预训练用于语言理解</td>
+<td align="left">BERT</td>
+<td align="left">-</td>
+</tr>
+</tbody>
+</table>
+<p>The idea of masked autoencoders, a form of more general denoising autoencoders[48], is natural and applicable(适用的) in computer vision as well. Indeed, closely related research in vision[49,39], preceded(先于) BERT. However, despite significant interest in this idea following the success of BERT, progress of autoencoding methods in vision lags behind NLP. We ask: what makes masked autoencoding different between vision and language? We attempt to answer this question from the following perspectives:</p>
+<p>(i) Until recently, architectures（架构） were different. In vision, convolutional networks[29] were dominant(占据主导地位的) over the last decade[28]. Convolutions typically operate on regular grids and it is not straightforward to integrate(整合) 'indicators'(指标) such as mask tokens[14] or positional embeddings[47] into convolutional networks.
+This architectural gap, however, has been addressed with the introduction of Vision Transformers(ViT)[16] and should no longer present an obstacle(障碍).</p>
+<p>(ii) Information density(密度) is different between language and vision. Languages are human-generated signals that are highly semantic and information-dense. When training a model to predict only a few missing words per sentence, this task appears to induce(诱导) sophisticated(复杂的) language understanding. Images, on the contrary, are natural signals with heavy spatial redundancy(冗余) - e.g., a missing patch can be recoverted from neighboring patches with little high-level understanding of parts, objects, and scenes. To overcome this difference and encourage learning useful features, we show that a simple strategy works well in computer vision: masking a very high portion of random patches. This strategy largely reduces redundancy and creates a chanllenging self-supervisory task that requires holistic(整体的) understanding beyond(超过) low-level image statistics. To get a qualitative(定性的) sense of our reconstruction task, see Figures 2 - 4.</p>
+<p>(iii) The autoencoder's decoder, which maps the latent representation back to the input, plays a different role between reconstructing text and images. In vision, the decoder reconstructs pixels, hence its output is of a lower semantic level than common recognition tasks. This is in contrast to language, where the decoder predicts missing words that contain rich semantic information. While in BERT the decoder can be trival(琐碎的) (an MLP) [14], we found that for images, the decoder design plays a key role in determining the semantic level of the learned latent representations.</p>
+<p>Driven by this analysis, we present a simple, effective, and scalable form of a masked autoencoder(MAE) for visual representation learning. Our MAE masks random patches from the input image and reconstructs the missing patches in the pixel space. It has an asymmetric encoder-decoder design. Our encoder operates only on the visible subset of patches (without mask tokens), and our decoder is lightweight and reconstructs the input from the latent representation along with mask tokens (Figure 1). Shifting the mask tokens to the small decoder in our asymmetric(不对称的) encoder-decoder results in a large reduction in computation. Under this design, a very high masking ratio (e.g., 75%) can achieve a win-win scenario(双赢的设想):it optimizes accuracy while allowing the encoder to process only a small portion(e.g., 25%) of patches. This can reduce overall pre-training time by 3x or more and likewise(同样的) reduce memory consumption(消耗), enabling us to easily scale our MAE to large models.</p>
+<p>Our MAE learns very high-capacity that generalize well. With MAE pre-training, we can train data-hungry models like ViT-large/-Huge[16] on ImageNet-1K with improved generalization performance. With a vanilla ViT-Huge model, we achieve 87.8% accuracy when fine-tuned on ImageNet-1K. This outperforms all previous results that use only ImageNet-1K data. We also evaluate transfer learning on object detection, instance segmentation, and semantic segmentation. In these tasks, our pre-training achieves better results than its supervised pre-training counterparts, and more importantly, we observe significant gains by scaling up models. These observations are aligned with those witnessed in self-supervised pre-training in NLP[14,40,41,4] and we hope that they will enable our field to explore a similar trajectory(轨迹).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[48]Extracting and Composing robust features with denoising auto encoders</td>
+<td align="left">使用噪声自编码器的方式提取并组织鲁棒的特征</td>
+<td align="left">-</td>
+<td align="left">2008-07-05</td>
+</tr>
+<tr>
+<td align="left">[49]Stacked Denoising Autoencoders: Learning Useful Representations in a Deep Network with a Local Denoising Criterion(标准)</td>
+<td align="left">堆叠噪声自编码器：用一个局部的噪声标准去学习深度网络中有用的表征</td>
+<td align="left">-</td>
+<td align="left">2010-12-01</td>
+</tr>
+<tr>
+<td align="left">[39]Context Encoders: Feature Learning by Inpainting</td>
+<td align="left">上下文编码器：使用修复的方式来做特征学习</td>
+<td align="left">-</td>
+<td align="left">2016-04-25</td>
+</tr>
+<tr>
+<td align="left">[29] Backpropagation applied to handwritten zip code recognition</td>
+<td align="left">反向传播应用到手写体识别</td>
+<td align="left">-</td>
+<td align="left">1989-12-01</td>
+</tr>
+<tr>
+<td align="left">[28] ImageNet Classification with Deep Convolutional Neural Networks</td>
+<td align="left">使用卷积神经网络做图片分类</td>
+<td align="left">AlexNet</td>
+<td align="left">2012-12-03</td>
+</tr>
+<tr>
+<td align="left">[14]</td>
+<td align="left">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</td>
+<td align="left">深度双向Transformers的预训练用于语言理解</td>
+<td align="left">BERT</td>
+</tr>
+<tr>
+<td align="left">[47]Attention Is All You Need</td>
+<td align="left">注意力机制是你需要的</td>
+<td align="left">Transformer</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">用Transformers做大规模图片识别</td>
+<td align="left">ViT</td>
+<td align="left">2020-10-22</td>
+</tr>
+<tr>
+<td align="left">[40]Improving Language Understanding by Generative Pre-Training</td>
+<td align="left">使用生成式的预训练方式来提升语言理解</td>
+<td align="left">GPT</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[41]Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督多任务的学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[4]Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">2020-05-28</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">相关工作</h2>
+<p><strong>Masked language modeling</strong> and its autoregressive counterparts, e.g., BERT[14] and GPT[40,41,4], are highly successful methods for pre-training in NLP. These methods hold out a portion of the input sequence and train models to predict the missing content. These methods have been shown to scale excellently(非常好地)[4] and a large abundance of evidence indicates that these pre-trained representations generalize well to various downstream tasks.</p>
+<p><strong>Autoencoding</strong> is a classical(经典的) method for learning representations. It has encoder that maps an input to a latent representation and a decoder that reconstructs the input. For example, PCA and k-means are autoencoders[25]. Denoising autoencoders (DAE) [48] are a class of autoencoders that corrupt(腐败、败坏) an input signal and learn to reconstruct the original, uncorrupted signal. A series of methods can be thought of as a generalized DAE under different corruptions, e.g., masking pixels[49,39,6] or removing color channels[59]. Our MAE is a form of denosing autoencoding, but different from the classical DAE in numerous ways.</p>
+<p><strong>Masked image encoding</strong> methods learn representations from images corrupted by masking. The pioneering work of [49] presents masking as a noise type in DAE. Context Encoder[39] inpaints(修补、修复) large missing regions using convolutional networks. Motivated by the success in NLP, related recent methods[6,16,2] are based on Transformers[47]. iGPT[6] operates on sequences of pixels and predicts unknown pixels. The ViT paper[16] studies masked patch prediction for self-supervised learning. Most recently, BEiT[2] proposes to predict discrete(离散的) tokens[37,43].</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[40]Improving Language Understanding by Generative Pre-Training</td>
+<td align="left">使用生成式的预训练方式来提升语言理解</td>
+<td align="left">GPT</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[41]Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督多任务的学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[4]Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">2020-05-28</td>
+</tr>
+<tr>
+<td align="left">[25]Autoencoders, Minimum Descirption Length and Helmholtz Free Energy</td>
+<td align="left">自动编码器、最小描述长度和Helmholtz自由能</td>
+<td align="left">-</td>
+<td align="left">1993-11-29</td>
+</tr>
+<tr>
+<td align="left">[48]Extracting and Composing robust features with denoising auto encoders</td>
+<td align="left">使用噪声自编码器的方式提取并组织鲁棒的特征</td>
+<td align="left">-</td>
+<td align="left">2008-07-05</td>
+</tr>
+<tr>
+<td align="left">[49]Stacked Denoising Autoencoders: Learning Useful Representations in a Deep Network with a Local Denoising Criterion(标准)</td>
+<td align="left">堆叠噪声自编码器：用一个局部的噪声标准去学习深度网络中有用的表征</td>
+<td align="left">-</td>
+<td align="left">2010-12-01</td>
+</tr>
+<tr>
+<td align="left">[39]Context Encoders: Feature Learning by Inpainting</td>
+<td align="left">上下文编码器：使用修复的方式来做特征学习</td>
+<td align="left">-</td>
+<td align="left">2016-04-25</td>
+</tr>
+<tr>
+<td align="left">[6] Generative Pretraining From Pixels</td>
+<td align="left">从像素中做生成式的预训练</td>
+<td align="left">iGPT</td>
+<td align="left">2020-07-12</td>
+</tr>
+<tr>
+<td align="left">[59] Colorful Image Colorization</td>
+<td align="left">彩色图像着色</td>
+<td align="left">-</td>
+<td align="left">2016-03-28</td>
+</tr>
+<tr>
+<td align="left">[16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">用Transformers做大规模图片识别</td>
+<td align="left">ViT</td>
+<td align="left">2020-10-22</td>
+</tr>
+<tr>
+<td align="left">[2]BEiT: BERT Pre-Training of Image Transformers</td>
+<td align="left">将bert的预训练方式使用到图片transformer中</td>
+<td align="left">BEiT</td>
+<td align="left">2021-06-15</td>
+</tr>
+<tr>
+<td align="left">[47]Attention Is All You Need</td>
+<td align="left">注意力机制是你需要的</td>
+<td align="left">Transformer</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[37]Neural Discrete Representation Learning.</td>
+<td align="left">神经的离散表征学习</td>
+<td align="left">VQ-VAE</td>
+<td align="left">2017-11-02</td>
+</tr>
+<tr>
+<td align="left">[43]Zero-Shot Text-to-Image Generation</td>
+<td align="left">零样本的文本到图片的生成</td>
+<td align="left">-</td>
+<td align="left">2021-02-24</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Self-supervised learning</strong> approaches have been significant interest in computer vision, often focusing on different pretext tasks for pre-training [15,50,35,59,38,17]. Recently, contrastive learning[3,21] has been popular, e.g., [51,36,22,7], which models image similarity and disimilarity(差异性)(or only similarity[20,8])
+between two or more views. Contrastive and related methods strongly depend on data augmentation[7,20,8]. Autoencoding pursues(追求) a conceptually different direction, and it exhibits(展示) different behaviors as we will present.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[15]Unsupervised visual representation learning by context prediction.</td>
+<td align="left">通过上下文预测来进行无监督的视觉表征学习</td>
+<td align="left">-</td>
+<td align="left">2015</td>
+</tr>
+<tr>
+<td align="left">[50]Unsupervised Learning of Visual Representations using Videos</td>
+<td align="left">使用视频的无监督视频表征学习</td>
+<td align="left">-</td>
+<td align="left">2015-05-04</td>
+</tr>
+<tr>
+<td align="left">[35]Unsupervised Learning of Visual Representations by Solving Jigsaw Puzzles</td>
+<td align="left">通过解决拼图 的无监督视觉表征学习</td>
+<td align="left">2016-03-30</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">[59] Colorful Image Colorization</td>
+<td align="left">彩色图像着色</td>
+<td align="left">-</td>
+<td align="left">2016-03-28</td>
+</tr>
+<tr>
+<td align="left">[38]Learning Features by Watching Objects Move</td>
+<td align="left">通过观察物体移动来学习特征</td>
+<td align="left">-</td>
+<td align="left">2016-12-19</td>
+</tr>
+<tr>
+<td align="left">[17]Unsupervised Representation Learning by Predicting Image Rotations</td>
+<td align="left">通过预测图片旋转来进行无监督的表征学习</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">[3]Self-organizing neural network that discovers surfaces in random-dot stereograms</td>
+<td align="left">在随机点立体图中发现表面的自组织神经网络</td>
+<td align="left">-</td>
+<td align="left">2992-01-09</td>
+</tr>
+<tr>
+<td align="left">[21]Dimensionality Reduction by Learning an Invariant Mapping</td>
+<td align="left">通过学一个不变的映射，来是维度减小</td>
+<td align="left">DrLIM</td>
+<td align="left">2006-06-17</td>
+</tr>
+<tr>
+<td align="left">[51]Unsupervised Feature Learning via Non-Parametric Instance Discrimination</td>
+<td align="left">通过无参数的实例判别任务来进行无监督特征学习</td>
+<td align="left">-</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[36]Representation Learning with Contrastive Predictive Coding</td>
+<td align="left">基于对比预测编码的表征学习</td>
+<td align="left">-</td>
+<td align="left">2018-07-10</td>
+</tr>
+<tr>
+<td align="left">[22]Momentum Contrast for Unsupervised Visual Representation Learning</td>
+<td align="left">动量对比方法用于无监督视频表征学习</td>
+<td align="left">MoCo</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[7]A Simple Framework for Contrastive Learning of Visual Representations</td>
+<td align="left">一种视觉表征对比学习的简单框架</td>
+<td align="left">SimCLR</td>
+<td align="left">2020-02-13</td>
+</tr>
+<tr>
+<td align="left">[20]Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning</td>
+<td align="left">引导你自己的潜力：一种自监督学习的新方法</td>
+<td align="left">T3C</td>
+<td align="left">2020-06-13</td>
+</tr>
+<tr>
+<td align="left">[8]Exploring Simple Siamese Representation Learning</td>
+<td align="left">探索简单的连体表示学习</td>
+<td align="left">-</td>
+<td align="left">2020-11-20</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_4">方法</h2>
+<p>Our masked autoencoder(MAE) is a simple autoencoding approach that reconstructs the original signal given its partial observation(基于它部分的观察). Like all autoencoders, our approach has an encoder that maps the observed signal to a latent representation, and a decoder that reconstructs the original signal from the latent representation. Unlike classical autoencoders, we adopt an asymmetric design that allows the encoder to operate only on the partial, observed signal(without mask tokens) and a lightweight decoder that reconstructs the full signal from the latent representation and mask tokens. Figure 1 illustrates the idea, introduced next.</p>
+<p>图1</p>
+<p>Figure 1. <strong>Our MAE architecture</strong>. During pre-training, a large random subset of image patches(e.g., 75%) is masked out. The encoder is applied to the subset of visible patches. Mask tokens are introduced after the encoder, and the full set of encoded patches and mask tokens is processed by a small decoder that reconstructs the original image in pixels. After pre-training, the decoder is discarded(丢弃) and the encoder is applied to uncorrupted images to produce representations for recognition tasks.</p>
+<p><strong>Masking.</strong> Followiing ViT[16], we divide an image into regular non-overlapping patches. Then we sample a subset of patches and mask (i.e., remove) the remaining ones. Our sampling strategy is straightforward: we sample random patches without replacement, following a uniform distribution. We simply refer to this as "random sampling".</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">用Transformers做大规模图片识别</td>
+<td align="left">ViT</td>
+<td align="left">2020-10-22</td>
+</tr>
+</tbody>
+</table>
+<p>Random sampling with a high masking ratio (i.e., the ratio of removed patches) largely eliminates(消除) redundancy, thus creating a task that cannot be easily solved by extrapolation(外插、外延) from visible neighboring patches (see Figures 2-4). The uniform distribution prevents a potential center bias (i.e., more masked patches near the image center). Finally, the highly sparse input creates an opportunity for designing an efficient encoder, introduced text.</p>
+<p>图2</p>
+<p>Figure 2. Example results on ImageNet validation images. For each triplet, we show the masked image (left), our MAE reconstruction (middle), and the ground-truth (right). The masking ratio is 80%, leaving only 39 out of 196 patches. More examples are in the appendix. <em>As no loss is computed on visible patches. the model output on visible patches is qualitatively worse. One can simply overlay(覆盖) the output with the visible patches to improve visual quality. We intentionally(故意地) opt not do this, so we can more comprehensively demonstrate the method's behavior.</em></p>
+<p>图3</p>
+<p>Figure 3. Example results on COCO validation images, using an MAE trained on ImageNet (the same model weights in Figure 2). Observe the reconstructions on the two right-most examples, which, although different from the ground truth, are semantically plausible(似是而非).</p>
+<p>图4</p>
+<p>Figure 4. Reconstructions of ImageNet validation images using an MAE pre-trained with a masking ratio of 75% but applied on inputs with higher masking ratios. The predictions differ plausibly from the original images, showing that the method can generalize.</p>
+<p><strong>MAE encoder.</strong> Our encoder is a ViT[16] but applied only on visible, unmasked patches. Just as in a standard ViT, our encoder embeds patches by a linear projection with added positional embeddings, and then processes the resulting set via a series of Transformer blocks. However, our encoder only operates on a small subset (e.g. 25%) of the full set. Masked patches are removed; no mask tokens are used. This allows us to train very large encoders with only a fraction of compute and memory. The full set is handled by a lightweight decoder, described next.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">用Transformers做大规模图片识别</td>
+<td align="left">ViT</td>
+<td align="left">2020-10-22</td>
+</tr>
+</tbody>
+</table>
+<p><strong>MAE decoder.</strong> The input to the MAE decoder is the full set of tokens consisting of (i) encoded visible patches, and (ii) mask tokens. See Figure 1. Each mask token[14] is a shared, learned vector that indicates the presence of (表示..的存在) a missing patch to be predicted. We add positional embeddings to all tokens in this full set; without this, mask tokens would have no information about their location in the image. The decoder has another series of Transformer blocks.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[14]</td>
+<td align="left">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</td>
+<td align="left">深度双向Transformers的预训练用于语言理解</td>
+<td align="left">BERT</td>
+</tr>
+</tbody>
+</table>
+<p>The MAE decoder is only used during pre-training to perform the image reconstruction task (only the encoder is used to produce image representations for recognition). Therefore, the decoder architecture can be flexibly designed in a manner that is independent of the encoder design. We experiment with very samll decoders, narrower and shallowe than the encoder. For example, our default decoder has &lt;10% computation per token vs. the encoder. With this asymmetrical design, the full set of tokens are only processed by the lightweight decoder, which significantly reduces pre-training time.</p>
+<p><strong>Reconstruction target.</strong> Our MAE reconstructs the input by predicting the pixel values for each masked patch. Each element in the decoder's output is a vector of pixel values representing a patch. The last layer of the decoder is a linear projection whose number of output channels equals the number of pixel values in a patch. The decoder's output is reshaped to form a reconstructed image. Our loss function computes the mean squared error (MSE) between the reconstructed and original images in the pixel space. We compute the loss only on masked patches, similar to BERT[14].</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[14]</td>
+<td align="left">BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</td>
+<td align="left">深度双向Transformers的预训练用于语言理解</td>
+<td align="left">BERT</td>
+</tr>
+</tbody>
+</table>
+<p>We also study a variant whose reconstruction target is the normalized pixel values of each masked patch. Specifically, we compute the mean and standard deviation of all pixels in a patch and use them to normalize this patch. Using normalized pixels as the reconstruction target improves representation quality in our experiments.</p>
+<p><strong>Simple implementation.</strong> Our MAE pre-training can be implemented efficiently, and importantly, does not require any specialized sparse operations. First we generate a token for every input patch (by linear projection with an added positional embedding). Next we randomly shuffle the list of tokens and remove the last portion of the list, based on the masking ratio. This process produces a small subset of tokens for the encoder and is equivalent to sampling patches withour replacement. After encoding, we append a list of mask tokens to the list of encoded patches, and unshuffle this full list (inverting the random shuffle operation) to align all tokens with their targets. The decoder is applied to this full list (with positional embeddings added). As noted, no sparse operations are needed. This simple implementation introduces negligible(微不足道的) overhead(开销) as the shuffling and unshuffling operations are fast.</p>
+<h2 id="_5">讨论和结论</h2>
+<p>Simple algorithms that scale well are the core of deep learning. In NLP, simple self-supervised learning methods (e.g. [40,14,41,4]) enable benefits from exponentially scaling models. In computer vision, practical pre-training paradigms are dominantly supervised (e.g. [28,44,24,16]) despite progress in self-supervised learning. In this study, we observe on ImageNet and in transfer learning that an autoencoder - a simple self-supervised method similar to techniques in NLP - provides scalable benefits. Self-supervised learning in vision may now be embarking on a similar trajectory as in NLP.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">[14]BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding</td>
+<td align="left">深度双向Transformers的预训练用于语言理解</td>
+<td align="left">BERT</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[40]Improving Language Understanding by Generative Pre-Training</td>
+<td align="left">使用生成式的预训练方式来提升语言理解</td>
+<td align="left">GPT</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[41]Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督多任务的学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">-</td>
+</tr>
+<tr>
+<td align="left">[4]Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">2020-05-28</td>
+</tr>
+<tr>
+<td align="left">[28]ImageNet Classification with Deep Convolutional Neural Networks</td>
+<td align="left">使用卷积神经网络做图片分类</td>
+<td align="left">AlexNet</td>
+<td align="left">2012-12-03</td>
+</tr>
+<tr>
+<td align="left">[44]Very Deep Convolutional Networks for Large-Scale Image Recognition</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">2014-09-04</td>
+</tr>
+<tr>
+<td align="left">[24]Deep Residual Learning for Image Recognition</td>
+<td align="left">使用残差学习来做图片分类</td>
+<td align="left">ResNet</td>
+<td align="left">2015-12-10</td>
+</tr>
+<tr>
+<td align="left">[16]An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">用Transformers做大规模图片识别</td>
+<td align="left">ViT</td>
+<td align="left">2020-10-22</td>
+</tr>
+</tbody>
+</table>
+<p>On the other hand, we note that images and languages are signals of a different nature and this difference must be addressed carefully. Images are merely(仅仅) recorded light(光) without a semantic decomposition into the visual analogue of words. Instead of attempting to remove objects, we remove random patches that most likely do not form a semantic segment. Likewise, our MAE reconstructs pixels, which are not semantic entities. Nevertheless, we observe (e.g., Figure 4) that our MAE infers complex, holistic(整体的) reconstructions, suggesting it has learned numerous(很多的) visual concepts, i.e. semantics. We hypothesize that this behavior occurs by way of a rich hidden representation inside the MAE. We hope this perspective will inspire(启发) future work.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="../paper_interpretation/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 论文详解" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              论文详解
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../../X-CLIP/paper_interpretation/" class="md-footer__link md-footer__link--next" aria-label="下一页: 论文详解" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              论文详解
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022 Donglin Cui
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/donglin8506" target="_blank" rel="noopener" title="GitHub | Donglin-Cui" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.top", "navigation.indexes", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.078830c0.min.js"></script>
+      
+    
+  </body>
+</html>

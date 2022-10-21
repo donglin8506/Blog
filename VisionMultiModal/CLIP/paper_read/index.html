@@ -1,0 +1,2574 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="崔东林的技术积累">
+      
+      
+        <meta name="author" content="崔东林">
+      
+      
+        <link rel="canonical" href="https://donglin8506.github.io/Blog/VisionMultiModal/CLIP/paper_read/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.1, mkdocs-material-8.5.6">
+    
+    
+      
+        <title>论文通读 - 从零实现</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.20d9efc8.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../../.." title="从零实现" class="md-header__button md-logo" aria-label="从零实现" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            从零实现
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              论文通读
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/donglin8506/Blog" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    donglin8506/Blog
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../Mkdocs/" class="md-tabs__link">
+      mkdocs使用
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../deep_learning/transformer/" class="md-tabs__link">
+        深度学习基础篇
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../object_detection/ObjectDetection/" class="md-tabs__link">
+        目标检测篇
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../object_detection/VIT/paper_interpretation.md" class="md-tabs__link">
+        目标分类
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+    
+  
+
+
+  
+  
+  
+    
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../paper_interpretation/" class="md-tabs__link md-tabs__link--active">
+        视觉多模态
+      </a>
+    </li>
+  
+
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../Introduction.md" class="md-tabs__link">
+        系统篇
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="从零实现" class="md-nav__button md-logo" aria-label="从零实现" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    从零实现
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/donglin8506/Blog" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    donglin8506/Blog
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Mkdocs/" class="md-nav__link">
+        mkdocs使用
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          深度学习基础篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="深度学习基础篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          深度学习基础篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deep_learning/transformer/" class="md-nav__link">
+        transformer介绍
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../deep_learning/conv2d/" class="md-nav__link">
+        手动实现卷积
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          目标检测篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="目标检测篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          目标检测篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/ObjectDetection/" class="md-nav__link">
+        yolov5
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          目标分类
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="目标分类" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          目标分类
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4_1" type="checkbox" id="__nav_4_1" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4_1">
+          ViT
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ViT" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          ViT
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_interpretation.md" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_read.md" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../object_detection/VIT/paper_code/main.md" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          视觉多模态
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="视觉多模态" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          视觉多模态
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_1" type="checkbox" id="__nav_5_1" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_1">
+          CLIP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="CLIP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          CLIP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          论文通读
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        论文通读
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    方法
+  </a>
+  
+    <nav class="md-nav" aria-label="方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    自然语言监督
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-sufficiently-large-dataset" class="md-nav__link">
+    Creating a Sufficiently Large Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-selecting-an-efficient-pre-training-method" class="md-nav__link">
+    2.3 Selecting an Efficient Pre-Training Method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-and-scaling-a-model" class="md-nav__link">
+    Choosing and Scaling a Model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-training" class="md-nav__link">
+    2.5 Training
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3. 实验
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 实验">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 零样本迁移
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 零样本迁移">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311-motivation" class="md-nav__link">
+    3.1.1 Motivation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312-using-clip-for-zero-shot-transfer" class="md-nav__link">
+    3.1.2 Using CLIP for Zero-shot Transfer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313-initial-comparison-to-visual-n-grams" class="md-nav__link">
+    3.1.3 Initial Comparison to Visual N-Grams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314-prompt-engineering-and-ensembling" class="md-nav__link">
+    3.1.4 Prompt Engineering And Ensembling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#315-analysis-of-zero-shot-clip-performance" class="md-nav__link">
+    3.1.5 Analysis of Zero-shot CLIP Performance
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-representation-learning" class="md-nav__link">
+    3.2 Representation Learning
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-robustness-to-natural-distribution-shift-clip" class="md-nav__link">
+    3.3 Robustness to Natural Distribution Shift (有自然的分布偏移的情况下 CLIP的鲁棒性是怎样的)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-limitations" class="md-nav__link">
+    6. Limitations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paper_code/main/" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_2">
+          MAE
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="MAE" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          MAE
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MAE/paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MAE/paper_read/" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../MAE/paper_code/main.md" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          X-CLIP
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="X-CLIP" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          X-CLIP
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_interpretation/" class="md-nav__link">
+        论文详解
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_read/" class="md-nav__link">
+        论文通读
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../X-CLIP/paper_code/main/" class="md-nav__link">
+        代码阅读
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" checked>
+      
+      
+      
+        
+          
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          系统篇
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="系统篇" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          系统篇
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Introduction.md" class="md-nav__link">
+        None
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cuidonglin/" class="md-nav__link">
+        个人简介
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    摘要
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    引言
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    方法
+  </a>
+  
+    <nav class="md-nav" aria-label="方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    自然语言监督
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-a-sufficiently-large-dataset" class="md-nav__link">
+    Creating a Sufficiently Large Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-selecting-an-efficient-pre-training-method" class="md-nav__link">
+    2.3 Selecting an Efficient Pre-Training Method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-and-scaling-a-model" class="md-nav__link">
+    Choosing and Scaling a Model
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#25-training" class="md-nav__link">
+    2.5 Training
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    3. 实验
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 实验">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31" class="md-nav__link">
+    3.1 零样本迁移
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1 零样本迁移">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#311-motivation" class="md-nav__link">
+    3.1.1 Motivation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#312-using-clip-for-zero-shot-transfer" class="md-nav__link">
+    3.1.2 Using CLIP for Zero-shot Transfer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#313-initial-comparison-to-visual-n-grams" class="md-nav__link">
+    3.1.3 Initial Comparison to Visual N-Grams
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#314-prompt-engineering-and-ensembling" class="md-nav__link">
+    3.1.4 Prompt Engineering And Ensembling
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#315-analysis-of-zero-shot-clip-performance" class="md-nav__link">
+    3.1.5 Analysis of Zero-shot CLIP Performance
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#32-representation-learning" class="md-nav__link">
+    3.2 Representation Learning
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#33-robustness-to-natural-distribution-shift-clip" class="md-nav__link">
+    3.3 Robustness to Natural Distribution Shift (有自然的分布偏移的情况下 CLIP的鲁棒性是怎样的)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-limitations" class="md-nav__link">
+    6. Limitations
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <a href="https://github.com/donglin8506/Blog/edit/master/docs/VisionMultiModal/CLIP/paper_read.md" title="编辑此页" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
+
+
+<p>论文名称: Learning Transferable(迁移性好的) Visual Models From Natural Language Supervision</p>
+<p>论文地址: https://arxiv.org/abs/2103.00020</p>
+<p>readpaper地址: https://readpaper.com/pdf-annotate/note?pdfId=4498485025120608257&amp;noteId=671513309851955200</p>
+<h2 id="_1">摘要</h2>
+<p>State-of-the-art computer vision systems are trained to predict a fixed set of predetermined（固定的、提前定义好的） object categories. This restricted form of supervision limits their generality（泛化性） and usability since additional labeled data is needed to specify any other visual concept. Learning directly from raw text about images is a promising alternative（有前途的版本） which leverages a much broader source of supervision. We demonstrate that the simple pre-training task of predicting which caption goes with which image is an efficient（高效的） and scalable（可扩展的） way to learn SOTA image representations from scratch on a dataset of 400 million (image, text) pairs collected from the internet. After pre-training, natural language is used to reference learned visual concepts (or describe new ones) enabling zero-shot transfer of the model to downstream tasks. We study the performance of this approach by benchmarking on over 30 different existing computer vision datasets, spanning tasks such as OCR, action recognition in videos, geo-localization, and many types of fine-grained object classification. The model transfers non-trivially to most tasks and is often competitive with a fully supervised baseline without the need for any dataset specific training. For instance, we match the accuracy of the original ResNet-50 on ImageNet zero-shot without needing to use any of the 1.28 million training examples it was trained on. We release our code and pre-trained model weights at https://github.com/OpenAI/CLIP.</p>
+<p>多模态对比学习 、 prompt
+使用ImageNet训练的ResNet50的模型和CLIP预训练模型的对比效果，可以打平。</p>
+<h2 id="_2">引言</h2>
+<p>Pre-training methods which learn directly from raw text have revolutionized(彻底改变) NLP over the last few years . (Dai &amp;Le, 2015; Peters er al., 2018; Howard &amp; Ruder, 2018; Radford et at., 2018; Devlin et al., 2018; Raffel et al., 2019). Task-agnostic objectives such as autoregressive（自回归预测） and masked language modeling have scaled across many orders of magnitude in compute, model capacity, and data, steadily improving capabilities. The development of "text-to-text"（文字进去、文字出去） as a standardized input-output interface (McCann et al., 2018; Radford et al., 2019; Raffel et al., 2019) has enabled taskagnostic architectures to zero-shot transfer to downstream datasets removing the need for specialized output heads or dataset specific customization.Flagship systems like GPT-3 (Brown et al., 2020) are now competitive across many tasks with bespoke models while requiring little to no dataset specific training data.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">论文标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Semi-supervised Sequence Learning</td>
+<td align="left">基于半监督的序列学习</td>
+<td align="left">-</td>
+<td align="left">Dai &amp;Le, 2015</td>
+</tr>
+<tr>
+<td align="left">Deep contextualized word representations</td>
+<td align="left">深度上下文的词表达</td>
+<td align="left">-</td>
+<td align="left">Peters er al., 2018</td>
+</tr>
+<tr>
+<td align="left">Universal Language Model Fine-tuning for Text Classification</td>
+<td align="left">文本分类的通用语言模型微调方法</td>
+<td align="left">ULMFiT</td>
+<td align="left">Howard &amp; Ruder, 2018</td>
+</tr>
+<tr>
+<td align="left">Improving Language Understanding by Generative Pre-Training</td>
+<td align="left">通过生成式的预训练方式改善语言理解能力</td>
+<td align="left">GPT</td>
+<td align="left">Radford et at., 2018</td>
+</tr>
+<tr>
+<td align="left">BERT: Pre-training of Deep Bidirectional Transformer for Language Understanding</td>
+<td align="left">用于语言理解的深度双向T预训练方法</td>
+<td align="left">BERT</td>
+<td align="left">Devlin et al., 2018</td>
+</tr>
+<tr>
+<td align="left">Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer</td>
+<td align="left">使用一个统一的文本到文本的T来探索迁移学习的限制</td>
+<td align="left">-</td>
+<td align="left">Raffel et al., 2019</td>
+</tr>
+<tr>
+<td align="left">The Natural Language Decathlon: Multitask Learning as Question Answering</td>
+<td align="left">自然语言十项全能：多任务学习当作问答</td>
+<td align="left">MQAN</td>
+<td align="left">McCann et al., 2018</td>
+</tr>
+<tr>
+<td align="left">Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督的多任务学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">Radford er al, 2019</td>
+</tr>
+<tr>
+<td align="left">Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">Brown et al., 2020</td>
+</tr>
+</tbody>
+</table>
+<p>These results suggest that the aggregate supervision accessible to modern pre-training methods within web-scale collections of text surpasses that of high-quality crowd-labeled NLP datasets. However, in other fields such as computer vision it is still standard practice to pre-train models on crowd-labeled datasets such as ImageNet (Deng et al., 2009). Could scalable pre-training methods which learn directly from web text result in a similar breakthrough in computer vision? Prior work is encouraging.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">ImageNet: A large-scale hierarchical image database</td>
+<td align="left">大规模分层图片数据库</td>
+<td align="left">ImageNet</td>
+<td align="left">Deng et al., 2009</td>
+</tr>
+</tbody>
+</table>
+<p>Over 20 years ago Mori et al. (1999) explored improving content based image retrieval by training a model to predict the nouns and adjectives in text documents paired with images. Quattoni et al. (2007) demonstrated it was possible to learn more data efficient image representations via manifold (流形)learning in the weight space of classifiers trained to predict words in captions associated with images. Srivastava &amp; Salakhutdinov (2012) explored deep representation learning by training multimodal Deep Boltzmann Machines on top of low-level image and text tag features. Joulin et al.(2016) modernized this line of work and demonstrated that CNNs trained to predict words in image captions learn useful image representations. They converted the title, description, and hashtag（标签） metadata of images in the YFCC100M dataset (Thomee et al., 2016) into a bag-ofwords multi-label classification task and showed that pretraining AlexNet (Krizhevsky et al., 2012) to predict these labels learned representations which preformed similarly to ImageNet-based pre-training on transfer tasks. Li et al.(2017) then extended this approach to predicting phrase n-grams in addition to individual words and demonstrated the ability of their system to zero-shot transfer to other image classification datasets by scoring target classes based on their dictionary of learned visual n-grams and predicting the one with the highest score. Adopting more recent architecture and pre-training approaches, VirTex(Desai &amp; Johnson,2020), ICMLM(Bulent Sariyildiz et al., 2020), and ConVIRT(Zhang et al., 2020) have recently demonstrated the potential of transformer-based language modeling, masked language modeling, and contrastive objectives to learn image representations from text.</p>
+<p>跟这篇文章很相似 Li et al.(2017)</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Image-to-word transformation based on dividing and vector quantizing images with words</td>
+<td align="left">依据单词将图片分割并向量化，来实现图片到文本的转换</td>
+<td align="left">-</td>
+<td align="left">Mori et al. (1999)</td>
+</tr>
+<tr>
+<td align="left">Learning Visual Representations using Images with Captions</td>
+<td align="left">学习有字幕图片的视觉表征</td>
+<td align="left">-</td>
+<td align="left">Quattoni et al. (2007)</td>
+</tr>
+<tr>
+<td align="left">Multimodal Learning with Deep Boltzmann Machines</td>
+<td align="left">使用玻尔兹曼机做多模态学习</td>
+<td align="left">-</td>
+<td align="left">Srivastava &amp; Salakhutdinov (2012)</td>
+</tr>
+<tr>
+<td align="left">Learning Visual Features from Large Weakly Supervised Data</td>
+<td align="left">从大规模的弱监督数据中学习视觉特征</td>
+<td align="left">-</td>
+<td align="left">Joulin et al.(2016)</td>
+</tr>
+<tr>
+<td align="left">YFCC100M: The New Data in Multimedia Research</td>
+<td align="left">用于多媒体研究的新数据集</td>
+<td align="left">YFCC100M</td>
+<td align="left">(Thomee et al., 2016)</td>
+</tr>
+<tr>
+<td align="left">ImageNet Classification with Deep Convolutional Neural Networks</td>
+<td align="left">使用卷积神经网络来做ImageNet分类</td>
+<td align="left">AlexNet</td>
+<td align="left">(Krizhevsky et al., 2012)</td>
+</tr>
+<tr>
+<td align="left">Learning Visual N-Grams from Web Data</td>
+<td align="left">从网页数据中学习视觉n-grams</td>
+<td align="left">-</td>
+<td align="left">Li et al.(2017)</td>
+</tr>
+<tr>
+<td align="left">VirTex: Learning Visual Representations from Textual Annotations</td>
+<td align="left">从文本注释中学习视觉表征</td>
+<td align="left">VirTex</td>
+<td align="left">VirTex(Desai &amp; Johnson,2020)</td>
+</tr>
+<tr>
+<td align="left">Learning Visual Representations with Caption Annotations</td>
+<td align="left">从字幕中学习是视觉表征</td>
+<td align="left">ICMLM</td>
+<td align="left">ICMLM(Bulent Sariyildiz et al., 2020)</td>
+</tr>
+<tr>
+<td align="left">Contrastive Learning of Medical Visual Representations from Paired Images and Text</td>
+<td align="left">从配对的图片-文本中学习医疗视觉表征</td>
+<td align="left">ConVIRT</td>
+<td align="left">ConVIRT(Zhang et al., 2020)</td>
+</tr>
+</tbody>
+</table>
+<p>While exciting as proofs of concept, using natural language supervision for image representation learning is still rare. This is likely because demonstrated performance on common benchmarks is much lower than alternative approaches(由于性能不高，所以将自然语言的监督信号使用的图片上，这样的工作还是比较少的). For example, Li et al.(2017) reach only 15% accuracy on ImageNet in a zero-shot setting. This is well below the 88.4% accurary of the current state of the art (Xie et al., 2020). It is even below the 50% accuracy of classic computer vision approaches (Deng et al., 2012).(Li是零样本推理，其他工作是在有监督训练后进行的评估) Instead, more narrowly(狭隘地) scoped but well-targeted uses of weak supervision have improved performance.(相比无监督训练，弱监督训练的效果相对更好一点) Mahajan et al.(2018) showed that predicting ImageNet-related hashtags(标签)(也是一种监督信号，只不过不是自然语言监督信号) on Instagram images is an effective pre-training task. When fine-tuned to ImageNet these pre-training models increased accuracy by 5% and improved the overall(全面的) state of the art at the time.Kolesnikov et al. (2019) and Dosovitskiy et al. (2020) have also demonstrated large grains on a broader set of transfer benchmarks by pre-training models to predicts the classes of the noisily labeled JFT-300M dataset(这些脏数据虽然没那么准，但也是一种自然语言的弱监督信号).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Learning Visual N-Grams from Web Data</td>
+<td align="left">从网页数据中学习视觉n-grams</td>
+<td align="left">-</td>
+<td align="left">Li et al.(2017)</td>
+</tr>
+<tr>
+<td align="left">Self-training with Noisy Student improves ImageNet classification</td>
+<td align="left">使用噪声学生的自学习来提升图片分类效果</td>
+<td align="left">-</td>
+<td align="left">(Xie et al., 2020)</td>
+</tr>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">探索弱监督预训练的限制</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.(2018)</td>
+</tr>
+<tr>
+<td align="left">Large Scale Learning of General Visual Representations for Transfer</td>
+<td align="left">学习大规模通用视觉表征用于迁移学习</td>
+<td align="left">BiT</td>
+<td align="left">Kolesnikov et al. (2019)</td>
+</tr>
+<tr>
+<td align="left">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">transformer用于图片分类</td>
+<td align="left">ViT</td>
+<td align="left">Dosovitskiy et al. (2020)</td>
+</tr>
+</tbody>
+</table>
+<p>This line of work represents the current pragmatic(务实的、实用主义的) middle ground（中间立场/中间地带）between learning from a limited amount of supervised "gold-labels"（固定标签的） learning from practically unlimited amounts of raw text. However, it it not without compromises(然而，这并非不能妥协). Both works carefully design, and in the process limit, their supervision to 1000 and 18291 classes respectively. Natural language is able to express, supervise, a much wider set of visual concepts through its generality. Both approaches also use static softmax classfifiers to perform prediction and lack a mechanism for dynamic outputs. This severely(严重地) curtails（削减了） their flexibility and limits their "zero-shot" capabilities.</p>
+<p>A crucial difference between these weakly supervised models and recent explorations of learning image representations directly from natural language is scale(两者的区别是规模的不同). While Mahajan et al.(2018) and Kolesnikov et al. (2019) trained their models for accelerator（gpu或者tpu等硬件，相比cpu是加速的） years on millions to billions of images（百万到十亿级规模）, VirTex, ICMLM, and ConVIRT (这三个方法相比前面几个方法，训练的时间短，使用的数据量小)trained for accelerator days（多少天） on one to two hundred thousand images（几十万规模）. In this work（数据规模变大）, we close this gap and study the behaviors of image classifiers trained with natural language supervision at large scale. Enabled by the large amounts of publicly available data of this form on the internet, we create a new dataset of 400 million (image, text) pairs and demonstrate that a simplified version of ConvVIRT trained from scratch, which we call CLIP, for Contrastive Language-Image  Pre-training, is an efficient method of learning from natural language supervision. We study the scalability of CLIP by training a series of eight models（从resnet-&gt;efficientnet-&gt;vit-L） spanning almost 2 orders of magnitude of compute(计算量提升了100倍) and observe that transfer performance is a smoothly predictable function of compute（迁移学习的效果和计算量基本上是成正相关的） (Hestness et al., 2017; Kaplan et al., 2020). We find that CLIP, similar to the GPT family, learns to perform a wide set of tasks during pre-training including OCR, geo-localization, action recognition, and many others. We measure this by benchmarking the zero-shot transfer performance of CLIP on over 30 existing datasets and find it can be competitive with prior task-specific supervised models. We also confirm(确认) these findings with linear-probe(骨干网络冻住，用作抽取特征，再加分类头) representation learning analysis and show that CLIP outperforms the best publicly available ImageNet model while also being more computationally efficient. We additionally find that zero-shot CLIP models are much more robust（更鲁棒的，在素描数据集上的效果也挺好） than equivalent(相等的) accuracy supervised ImageNet models which suggests that zero-shot evaluation of task-agnostic models is much more representative of a model's capability. (我们还发现，零样本 CLIP 模型比同等精度的监督 ImageNet 模型更稳健，这表明任务无关模型的零样本评估更能代表模型的能力). These results have significant policy(政策的) and ethical（伦理的） implications, which we consifer in Section 7.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">探索弱监督预训练的限制</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.(2018) 弱监督方法</td>
+</tr>
+<tr>
+<td align="left">Large Scale Learning of General Visual Representations for Transfer</td>
+<td align="left">学习大规模通用视觉表征用于迁移学习</td>
+<td align="left">BiT</td>
+<td align="left">Kolesnikov et al. (2019) 弱监督方法</td>
+</tr>
+<tr>
+<td align="left">Deep Learning Scaling is Predictable, Empirically</td>
+<td align="left">深度学习的扩展情况是可预测的，是有经验值的</td>
+<td align="left">-</td>
+<td align="left">Hestness et al., 2017</td>
+</tr>
+<tr>
+<td align="left">Scaling Laws for Neural Language Models</td>
+<td align="left">自然语言模型的扩展规则</td>
+<td align="left">-</td>
+<td align="left">Kaplan et al., 2020</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">方法</h2>
+<h4 id="_4">自然语言监督</h4>
+<p>At the core of our approach is the idea of learning perception from supervision contained in natural language. As discussed in the introduction, this is not at all a new idea, however, terminology(术语、用于) used to describe work in this space is varied, even seemingly contradictory(矛盾的), and stated motivations are diverse. Zhang et al. (2020), Gomez et al. (2017), Joulin et al. (2016), and Desai &amp; Johnson (2020) all introduce methods which learn visual representations from text paired with images but describe their approaches as unsupervised, self-supervised, weakly supervised, and supervised respectively.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Contrastive Learning of Medical Visual Representations from Paired Images and Text</td>
+<td align="left">从配对的图片-文本中学习医疗视觉表征</td>
+<td align="left">ConVIRT</td>
+<td align="left">ConVIRT(Zhang et al., 2020)</td>
+</tr>
+<tr>
+<td align="left">Self-Supervised Learning of Visual Features through Embedding Images into Text Topic Spaces</td>
+<td align="left">通过把图片嵌入到文本空间中，来用自监督的方式学习视觉特征</td>
+<td align="left">-</td>
+<td align="left">Gomez et al. (2017)</td>
+</tr>
+<tr>
+<td align="left">Learning Visual Features from Large Weakly Supervised Data</td>
+<td align="left">从大规模的弱监督数据中学习视觉特征</td>
+<td align="left">-</td>
+<td align="left">Joulin et al.(2016)</td>
+</tr>
+<tr>
+<td align="left">VirTex: Learning Visual Representations from Textual Annotations</td>
+<td align="left">从文本注释中学习视觉表征</td>
+<td align="left">VirTex</td>
+<td align="left">VirTex(Desai &amp; Johnson,2020)</td>
+</tr>
+</tbody>
+</table>
+<p>We emphasize that what is common across this line of work is not any of the details of th particular methods used but the appreciation(欣赏) of natural language as a training signal(把自然语言作为一种训练信号). All these approaches are learning from natrual language supervision. Although early work wrestled(摔跤) with the complexity of natural language when using topic model and n-gram representations, improvements in deep contextual representation learning（具有上下文语义环境的学习方式） suggest we now have the tools to effectively leverage（利用） this abundant source of supervision(McCann et al., 2017).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Learned in Translation: Contextualized Word Vectors</td>
+<td align="left">上下文词向量，学习用于翻译</td>
+<td align="left">-</td>
+<td align="left">McCann et al., 2017</td>
+</tr>
+</tbody>
+</table>
+<p>Learning from natual language has several potential strengths(优势) over other training methods. It's much easier to scale natural language supervision compared to standard crowd-sourced labeling 
+for image classification since it does not require annotations to be in a classic "machine learning compatible(兼容的) format" such as the canonical(典范) 1-of-N majority vote "gold label". Instead, methods which work on natural language can learn passively(被动地) from the supervision contained  in the vast amount of text on the internet. Learning from natural language also has an important advantage over most unsupervised or self-supervised learning approaches in that it doesn't "just" learn a representation but also connects that repesentation to language which enables flexible zero-shot transfer. (与大多数无监督或自监督学习方法相比，从自然语言中学习还有一个重要的优势，因为它不仅“只是”学习一种表示，而且还将这种表示与语言联系起来，从而就能实现灵活的零样本迁移)
+In the following subsections, we detail the specific approach we settled on.</p>
+<h4 id="creating-a-sufficiently-large-dataset">Creating a Sufficiently Large Dataset</h4>
+<p>Existing work has mainly used three datasets, MS-COCO(Lin et al., 2014), Visual Genome(Krishna et al., 2017), and YFCC100M(Thomee et al., 2016). While MS-COCO and Visual Genome are high quality crowd-labeled datasets, they are small by modern standards with approximately 100,000 training photos each. By comparison, other computer vision systems are trained on up to 3.5 billion  Instagram photos(Mahajan et al., 2018). YFCC100M, at 100 million photos, is a possible alternative, but the metadata for each image is sparse and of varying quality(稀疏且质量参差不齐的). Many images use automatically generated filenames like 20160716_113957.JPG as "titles" or contain "descriptions" of camera exposure settings. After filtering to keep only images with natural language titles and/or descriptions in English, the dataset shrunk by a factor of 6 to only 15 million photos. This is approximately the same size as ImageNet.</p>
+<p>A major motivation for natural language supervision is the large quantities of data of this form available publicly on the internet. Since existing datasets do not adequately(充分地) reflect this possibility, considering results only on them would underestimate(低估) the potential of this line of research.(现有的数据集量级比较小，因此不能完全反映出用海量互联网的自然语言数据做监督能做成事情的可能性，仅仅使用这样的数据集，可能会低估这方面研究的潜力). To address this, we constructed a new dataset of 400 million (image,text) pairs collected form a variety of publicly available sources on the Internet. To attempt to cover as broad a set of visual concepts as possible, we search for (image, text) pairs as part of the construction process(构建数据过程中) whose text includes one of a set of 500,000 queries. We approximately class balance the results by including up to 20,000(image,text) pairs per query. The resulting dataset has a similar total word count as the WebText dataset used to train GPT-2. We refer to this dataset as WIT for WebImageText.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Microsoft COCO: Common Objects in Context</td>
+<td align="left">上下文中的常见物体</td>
+<td align="left">COCO</td>
+<td align="left">Lin et al., 2014</td>
+</tr>
+<tr>
+<td align="left">Visual Genome: Connecting Language and Vision Using Crowd sourced Dense Image Annotations</td>
+<td align="left">视觉基因组: 使用众包的密集图像标注来连接语言和视觉</td>
+<td align="left">-</td>
+<td align="left">Krishna et al., 2017</td>
+</tr>
+<tr>
+<td align="left">YFCC100M: The New Data in Multimedia Research</td>
+<td align="left">多媒体研究中的新数据集</td>
+<td align="left">YFCC100M</td>
+<td align="left">Thomee et al., 2016</td>
+</tr>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">探索弱监督预训练的限制</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.(2018)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="23-selecting-an-efficient-pre-training-method">2.3 Selecting an Efficient Pre-Training Method</h4>
+<p>State-of-the-art computer vision systems use very large amounts of compute. Mahajan et al.(2018) required 19 GPU years to train their ResNeXt101-32x48d and Xie et al.(2020) required 33 TPUv3 core-years to train their Noisy Student EfficientNet-L2. When considering that both these systems were trained to predict only 1000 ImageNet classes, the task of learning an open set of visual concepts from natural language seems daunting(令人生畏). In the course of our efforts, we found training efficiency(训练效率) was key to successfully scaling natural language supervision(成功扩展自然语言监督的关键) and we selected our final pre-training method based on this metric.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">探索弱监督预训练的限制</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.(2018)</td>
+</tr>
+<tr>
+<td align="left">Self-training with Noisy Student improves ImageNet classification</td>
+<td align="left">使用噪声学生的自学习来提升图片分类效果</td>
+<td align="left">-</td>
+<td align="left">(Xie et al., 2020)</td>
+</tr>
+</tbody>
+</table>
+<p>Our initial approach, similar to VirTex, jointly trained an image CNN and text transformer from scratch to predict the caption of an image. However, we encountered difficulties efficiently scaling this method. In Figure 2 we show that a 63 million parameter transformer language model, which already uses twice the compute of its ResNet-50 image encoder, learns to recognize ImageNet classes three times slower than a much simpler baseline that predicts a bag-of-words encoding of the same text. </p>
+<p>Both these approaches share a key similarity. They try to predict the exact words of the text accompanying each image. This is a difficult task due to the wide variety of descriptions, comments, and related text that co-occur with images. Recent work in contrastive representation learning for images has found that contrastive objectives can learn better representations than their equivalent predictive objective (Tian et al., 2019). Other work has found that although generative models of images can learn high quality image representations, they require over an order of magnitude (超过一个数量级) of more compute than contrastive models with the same performance(Chen et al., 2020a). Noting these findings, we explored training a system to solve the potentially easier proxy task of predicting only which text as a whole(整个文本) is paired with which image and not the exact words(确切的词) of that text. Starting with the same bag-of-words encoding baseline, we swapped the predictive objective（预测性的任务） for a contrastive objective（对比性的的任务） in Figure 2 and observed a further 4x efficientcy improvement in the rate of zero-shot transfer to ImageNet.</p>
+<p>去预测图片对应的文本中的单个词 -&gt; 去预测图片对应的文本中的单个词的表征（效果提升3倍） -&gt; 去预测图片与文本是否对应（效果进一步提升4倍）</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Contrastive Multiview Coding</td>
+<td align="left">对比的多角度编码</td>
+<td align="left">-</td>
+<td align="left">Tian et al., 2019</td>
+</tr>
+<tr>
+<td align="left">Generative Pretraining From Pixels</td>
+<td align="left">从像素做生成式的预训练</td>
+<td align="left">-</td>
+<td align="left">Chen et al., 2020a</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="clip_f2" src="./img/clip_f2.png" title="clip_f2" />
+图2 <strong>CLIP is much more efficient at zero-shot transfer than our image caption baseline.</strong> Althougn highly expressive(富有表现力), we found that transformer-based language models are relatively weak at zero-shot ImageNet classification. Here, we see that it learns 3x slower than a baseline which predicts a bag-of-words(BoW) encoding of the text(Joulin et al., 2016). Swapping the prediction objective for the contrastive objective of CLIP further improves efficiency another 4x.</p>
+<p>Given a batch of N(image, text)pairs, CLIP is trained to predict which of the NxN possible(image, text) pairings across a batch actually occurred. To do this, CLIP learns a multi-modal embedding space by jointly training an image encoder and text encoder to maximize the cosine similarity of the image and text embeddings of the N real pairs in the batch while minimizeing the cosine similarity of the embeddings of the N^2 - N incorrect pairings. We optimize a symmetric cross entropy loss over these similarity scores. In figure 3, we include pseudocode of the core of an implementation of CLIP. To our knowledge this batch construction technique and objectives was first introduced in area of deep metric learning as the multi-class N-pair loss Sohn(2016) was popularized for contrastive representation learning by Oord et al.(2018) as the InfoNCE loss, and was recently adapted for contrastive(text, image) representation learning in the domain of medical imaging by Zhang et al.(2020).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Improved deep metric learning with multi-class N-pair loss objective</td>
+<td align="left">使用多分类的多对的损失函数来提升深度评估学习能力</td>
+<td align="left">- 2016-12-05</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Representation Learning with Contrastive Predictive Coding</td>
+<td align="left">使用对比预测编码来进行表征学习</td>
+<td align="left">CPC</td>
+<td align="left">Oord et al.(2018)</td>
+</tr>
+<tr>
+<td align="left">Contrastive Learning of Medical Visual Representations form Paired Images and Text</td>
+<td align="left">使用成对的图片文本进行对比学习，用于医疗视觉表征</td>
+<td align="left">Zhang et al.(2020)</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python"># image_encoder - ResNet of Vision Transformer
+# text_encoder  - CBOW or Text Transformer
+# I[n, h, w, c] - minibatch of aligned images
+# T[n, l]       - minibatch of aligned texts
+# W_i[d_i, d_e] - learned proj of image to embed
+# W_t[d_t, d_e] - learned proj of text to embed
+# t             - learned temperature parameter
+
+# extract feature representations of each modality
+I_f = image_encoder(I) # [n, d_i]
+T_f = text_encoder(T)  # [n, d_t]
+
+# joint multimodal embedding [n, d_e]
+I_e = l2_normalize(np.dot(I_f, W_i), axis=1)
+T_e = l2_normalize(np.dot(T_f, W_t), axis=1)
+
+# scaled pairwise cosine similarities [n, n]
+logits = np.dot(I_e, T_e.T) * np.exp(t)
+
+# symmetric loss function
+labels = np.arange(n)
+loss_i = cross_entropy_loss(logits, labels, axis=0)
+loss_t = cross_entropy_loss(logits, labels, axis=1)
+loss = (loss_i + loss_t) / 2
+</code></pre>
+<p>图3 Numpy-like pseudocode for the core of an implementation of CLIP</p>
+<p>Due to the large size of our pre-training dataset, over-fitting is not a major concern and the details of training CLIP are simplified compared to the implementation of Zhang et al.(2020). We train CLIP form scratch without initiallizeing the image encoder with ImageNet weights or the text encoder with pre-trained weights. We do not use the non-linear projection between the representation and the contrastive embedding space, a change which was introduced by Bachman et al.(2019) and popularized by Chen et al.(2020b). We instead use only a linear projection to map from each encoder's representation to the multi-modal embedding space. We did not notice a difference in training two versions and speculate(推测) that non-linear projections may be co-adapted with details of current image only in self-supervised representation learning methods. We also remove the text transformation function <code>{t_u}</code> from Zhang et al.(2020) which samples a single sentence at uniform from the text since many of the (image, text) pairs in CLIP's pre-training dataset are only a single sentence. We also simplify the image transformation function $t_v$. A random square crop from resized images is the only data augmentation used during training. Finally, the temperature parameter which controls the range of the logits in the softmax, $\tau$, is directly optimized during training as a log-parameterized multiplicative scalar to avoid turning as a hyper-parameter.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Contrastive Learning of Medical Visual Representations form Paired Images and Text</td>
+<td align="left">使用成对的图片文本进行对比学习，用于医疗视觉表征</td>
+<td align="left">Zhang et al.(2020)</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">A Simple Framework for Contrastive Learning of Visual Representations</td>
+<td align="left">一个简单的框架用于视觉表征的对比学习</td>
+<td align="left">SimCLR</td>
+<td align="left">Chen et al.(2020b)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="choosing-and-scaling-a-model">Choosing and Scaling a Model</h4>
+<p>We consider two different architectures for the image encoder. For the first, we use ResNet-50 as the base architecture for the image encoder due to its widespread adoption and proven performance. We make several modifications to the original version using the ResNet-D improvements from He et al.(2019) and the antialiased(抗锯齿) rect-2 blur(模糊) pooling from Zhang(2019). We also replace the global average pooling layer with an attention pooling mechanism. The attention pooling is implemented as a single layer of "transformer-style" multi-head QKV attention where the query is conditioned on the global average-pooled representation of the image. For the second architecture, we experiment with the recently introduced Vision Transformer(ViT)(Dosovitskiy et al.,2020). We closely follow their implementation with only the minor modification of adding an additional layer normalization to the combined patch and position embeddings before the transformer and use a slightly different initialization scheme(方案).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Bag of Tricks from Image Classification with Convolutional Neural Networks</td>
+<td align="left">用卷积神经网络做图片分类的一堆技巧</td>
+<td align="left">-</td>
+<td align="left">He et al.(2019)</td>
+</tr>
+<tr>
+<td align="left">Making Convolutional Networks Shift-Invariant Again</td>
+<td align="left">使卷积神经网络更加尺度不变</td>
+<td align="left">-</td>
+<td align="left">Zhang(2019)</td>
+</tr>
+<tr>
+<td align="left">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">transformer用于图片分类</td>
+<td align="left">ViT</td>
+<td align="left">Dosovitskiy et al. (2020)</td>
+</tr>
+</tbody>
+</table>
+<p>The text encoder is a Transformer(Vaswani et al.,2017) with the architecture modifications described in Radford et al.(2019). As a base size we use a 63M-parameter 12 layer 512-wide model with  8 attention heads. The transformer operates on lower-cased byte pair encoding(BPE) representation of the text with a 49,152 vocab size(Sennrich et al.,2015). For computational efficiency, the max sequence length was capped(上限) at 76. The text sequence is bracketed with(用括号括起来) [SOS] and [EOS] tokens and the activations of the highest layer of the transformer at the [EOS] token are treated as the feature representation of the text which is layer normalized and then linearly projected into the multi-modal embedding space. Masked self-attention was used in the text encoder to preserve the ability to initialize with a pre-trained language model or add language modeling as an auxiliary(辅助) objective, though exploration of this is left as future work. </p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Attention Is All You Need</td>
+<td align="left">注意力机制是你需要的</td>
+<td align="left">ViT</td>
+<td align="left">Vaswani et al.,2017</td>
+</tr>
+<tr>
+<td align="left">Language Models are Unsupervised Multitask Learners</td>
+<td align="left">语言模型是无监督的多任务学习器</td>
+<td align="left">GPT-2</td>
+<td align="left">Radford er al, 2019</td>
+</tr>
+</tbody>
+</table>
+<p>While previous computer vision research has often scaled models by increasing the width(Mahajan et al., 2018) or depth(He et al., 2016a) in isolation(隔离的，单独的), for the ResNet image encoders we adapt the approach of Tan &amp; Le(2019) which found that allocating(分配) additional compute across all of width, depth, and resolution outperforms only allocating(分配) it to only one dimension of the model. While Tan &amp; Le(2019) tune the ratio of compute allocated to each dimension for their EfficientNet architecture, we use a simple baseline of allocating additional compute equally to increasing the width, depth, and resolution of the model. For the text encoder, we only scale the width of the model to be proportional(成比例的) to the calculated increase in width of the ResNet and do not scale the depth at all, as we found CLIP's performance to be less sensitive to the capacity of the text encoder.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">探索弱监督预训练的限制</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.(2018)</td>
+</tr>
+<tr>
+<td align="left">Deep Residual Learning for Image Recognition</td>
+<td align="left">使用深度残差网络来做视频分类任务</td>
+<td align="left">ResNet</td>
+<td align="left">He et al., 2016a</td>
+</tr>
+<tr>
+<td align="left">EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks</td>
+<td align="left">EfficientNet: 重新思考卷积神经网络模型扩展问题</td>
+<td align="left">EfficientNet</td>
+<td align="left">Tan &amp; Le(2019)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="25-training">2.5 Training</h4>
+<p>We train a series of 5 ResNets and 3 Vision Transformers. For the ResNets we train a ResNet-50, a ResNet-101, and then 3 more which follow EfficientNet-style model scaling and use approximately 4x, 16x, 64x the compute of a ResNet-50. They are denoted as RN50x4, RN50x16, and RN50x64 respectively. For the Vision Transformers we train a ViT-B/32, a ViT-B/16, and a ViT-L/14.  We train all models for 32 epochs. We use the Adam optimizer(Kingma &amp; Ba, 2014) with decoupled(解耦的) weight decay regularization (Loshchilov &amp; Hutter, 2017) applied to all weights that are not gains or biases, and decay the learning rate unsing a cosine schedule(Loshchilov &amp; Hutter, 2016). Initial hyper-parameters were set using a comnination of grid searches, random search, and manual tuning on the baseline ResNet-50 model when trained for 1 epoach. Hyper-parameters were then adapted heuristically(启发式的) for larger models due to computational constraints. The learnable temperature parameter $\tau$ was initialized to the equivalent of 0.07 from (Wu et al., 2018). and clipped(剪切) to prevent scaling the logits by more than 100 which we found necessary to prevent(防止) training instability（不稳定）. We use a very large minibatch size of 32,768. Mixed-precision(Micikevicius et al., 2017) was used to accelerate training and save memory. To save additional memory, gradient checkpointing(梯度检查点) (Griewank &amp; Walther, 2000; Chen et al.,2016), half-precision Adam statistics(Dhariwal et al.,2020), and half-precision stochastically rounded(半精度随机四舍五入的) text encoder weights were used. The calculation(计算) of embedding similarities was also sharded with individual GPUs computing only the subset of the pairwise similarities necessary for their local batch of embeddings. The largest ResNet model, RN50x64, took 18 days to train on 592 V100 GPUs while the largest Vision Transformer took 12 days on 256 V100 GPUs. For the ViT-L/14 we also pre-train at a higher 336 pixel resolution for one additional epoch to boost performance similar to FixRes(Touvron et al.,2019). We denote this model as ViT-L/14@336px. Unless otherwise specified(除非另有规定), all results reported in this as "CLIP" use this model which we found to perform best.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Adam: A Method for Stochastic(随机) Optimization</td>
+<td align="left">随机优化的一种方法</td>
+<td align="left">Adam</td>
+<td align="left">Kingma &amp; Ba, 2014</td>
+</tr>
+<tr>
+<td align="left">Decoupled Weight Decay Regularization</td>
+<td align="left">解耦的权重衰减正则化</td>
+<td align="left">-</td>
+<td align="left">Loshchilov &amp; Hutter, 2017</td>
+</tr>
+<tr>
+<td align="left">SGDR: Stochastic Gradient Descent with Warm Restarts</td>
+<td align="left">使用热启动的方式和随机梯度下降相结合</td>
+<td align="left">SGDR</td>
+<td align="left">Loshchilov &amp; Hutter, 2016</td>
+</tr>
+<tr>
+<td align="left">Unsupervised Feature Learning via Non-Parametric Instance-level Discrimination</td>
+<td align="left">通过无参数实例级别判别的无监督特征学习</td>
+<td align="left">-</td>
+<td align="left">Wu et al., 2018</td>
+</tr>
+<tr>
+<td align="left">Mixed Precision Training</td>
+<td align="left">混合精度训练</td>
+<td align="left">-</td>
+<td align="left">Micikevicius et al., 2017</td>
+</tr>
+<tr>
+<td align="left">Algorithm 799: revolve: an implementation of checkpointing for the reverse or adjoint mode of cumputational differentiation</td>
+<td align="left">计算微分的反向或伴随模式的检查点实现</td>
+<td align="left">-</td>
+<td align="left">Griewank &amp; Walther, 2000</td>
+</tr>
+<tr>
+<td align="left">Training Deep Nets with Sublinear Memory Cost.</td>
+<td align="left">使用次线性内存成本训练深度网络</td>
+<td align="left">-</td>
+<td align="left">Chen et al.,2016</td>
+</tr>
+<tr>
+<td align="left">Jukebox: A Generative Model for Music</td>
+<td align="left">用于音乐的一个生成式模型</td>
+<td align="left">-</td>
+<td align="left">Dhariwal et al.,2020</td>
+</tr>
+<tr>
+<td align="left">Fixing the train-test resolution dicrepancy</td>
+<td align="left">修复训练-测试分辨率差异</td>
+<td align="left">-</td>
+<td align="left">Touvron et al.,2019</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3">3. 实验</h2>
+<h4 id="31">3.1 零样本迁移</h4>
+<h6 id="311-motivation">3.1.1 Motivation</h6>
+<p>In computer vision, zero-shot learning usually refers to the study of generalizing to unseen object categories in image classification(Lampert et al.,2009). We instead use the term in a broader sense and study generalization to unseen datasets. We motivate this as a proxy for performing unseen tasks, as aspired to in the zero-data learning paper of Larochelle et al.(2008). While much research in the filed of unsupervised learning focuses on the representation learning capabilities of machine learning systems, we motivate studying zero-shot transfer as a way of measuring the task-learning capabilities of machine learning systems. In this view, a dataset evaluates performance on a task on a specific distribution. However, many popular computer vision datasets were created by the research community primarily as benchmarks to guide the development of generic image classification methods rather than measuring performance on a specific task. While it is reasonable to say that(可以这么说) the SVHN dataset measures the task of street number transciption on the distribution of Google Street View photos, it is unclear what "real" task the CIFAR-10 dataset measures. It is clear, however, what distribution CIFAR-10 is drawn from - TinyImages(Torralba et al.,2008). On these kinds of datasets, zero-shot transfer is more an evaluation of CLIP's robustness to distribution shift and domain generalization rather tahn task generalization. Please Section 3.3 for analysis focused on this.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Learning To Detect Unseen Object Classes by Between-Class Attribute Transfer</td>
+<td align="left">通过类之间属性迁移，来学会检测没见过的物体类别</td>
+<td align="left">-</td>
+<td align="left">Lampert et al.,2009</td>
+</tr>
+<tr>
+<td align="left">Zero-data learning of new tasks</td>
+<td align="left">新任务的零样本学习</td>
+<td align="left">-</td>
+<td align="left">Larochelle et al.(2008)</td>
+</tr>
+</tbody>
+</table>
+<p>To our knowledge, Visual N-Grams(Li et al.,2017) first studied zero-shot transfer to existing image classification datasets in the manner described above. It is also the only other work we are aware of that has studied zero-shot transfer to standard image classification datasets using a generically pre-trained model and serves as(充当) the best reference point for contextualizing CLIP. Their approach learns the parameters of a dictionary of 142806 visual n-grams(spaning 1- to 5- grams) and optimizes these n-grams using a differential version of Jelinek-Mercer smoothing to maximize the probability of all text n-grams for a given image. In order to perform zero-shot transfer, they first convert the text of each of the dataset's class names into its n-gram representation and then compute its probability according to their model, predicting the one with the highest score.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Learning Visual N-Grams from Web Data</td>
+<td align="left">从网页数据中学习视觉N-Grams</td>
+<td align="left">-</td>
+<td align="left">Li et al.,2017</td>
+</tr>
+</tbody>
+</table>
+<p>插入一点内容</p>
+<p>Learning Visual N-Grams from Web Data</p>
+<p>Real-world image recognition systems need to recognize tens of thousands of classes that constitute(构成) a plethora of (许多的) visual concepts. The traditional approach of annotating thousands of images per class for training is infeasible(不可行的) in such a scenario(这种情况下), prompting the use of webly supervised data. This paper explores the training of image-recognition systems on large numbers of images and associated user comments. In particular, we develop visual n-gram models that can predict arbitrary phrases that are relevant to the content of an image. Our visual n-gram models are feed-forward convolutional networks trained using new loss functions that are inspired by n-gram models commonly used in language modeling. We demonstrate the merits of our models in phrase prediction, phrase-based image retrieval, relating images and captions, and zero-shot transfer.</p>
+<p>Our focus on studying zero-shot transfer as an evaluation of task learning is inspired by work demonstrating task learning in the field of NLP. To our knowledge Liu et al.(2018) first identified task learning as an "unexpected side-effect"(不期望的副作用) when a language model trained to generate Wikipedia articles learned to reliably transliterate(音译) names between languages. While GPT-1(Radford et al.,2018) focused on pre-training as a transfer learning method to improve supervised fine-tuning, , it also included an ablation study demonstrating that the performance of four heuristic(启发式的) zero-shot transfer methods improved steadily over the course of pre-training(在预训练过程中稳定地改善), without any supervised adaption. This analysis served as the basis for GPT-2(Radford et al.,2019) which focused exclusively(仅) on studying the task-learning capabilities of language models via zero-shot transfer.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Generating Wikipedia by Summarizing Long Sequences</td>
+<td align="left">通过归总长序列来生成wiki</td>
+<td align="left">-</td>
+<td align="left">Liu et al.(2018)</td>
+</tr>
+</tbody>
+</table>
+<h6 id="312-using-clip-for-zero-shot-transfer">3.1.2 Using CLIP for Zero-shot Transfer</h6>
+<p>CLIP is pre-trained to predict if an image and a text snippet(片段) are paired together in its dataset. To perform zero-shot classification, we reuse this capability. For each dataset, we use the names of all the classes in the dataset as the set of potential text pairings and predict the most probable(可能的)(image, text) pair according to CLIP. In a bit more detail, we first compute the feature embedding of the image and the feature embedding of the set of possible texts by their respective(各自的) encoders. The cosine similarity of these embeddings is then calculated, scaled by a temperature parameter $\tau$, and normalized into a probability distribution via a softmax. Note that this prediction layer is a multinormial(多项的) logistic regression classifier with L2-normalized inputs, L2-normalized weights, no bias, and temperature scaling. When interpreted this way, the image encoder is the computer vision backbone which computes a feature representation for the image and the text encoder is a hypernetwork(Ha et al.,2016) which generates the weights of a linear classifier based on the text specifying the visual concepts that the classes represent. Lei Ba et al.(2015) first introduced a zero-shot image classifier of this form while the idea of generating a classifier from natual language dates back to at least Elhoseiny et al.(2013). Continuing with this interpretation, every step of CLIP pre-training can be viewed as optimizeing the performance of a randomly created proxy to a computer vision dataset which contains 1 example per class and has 32768 total classes defined via natural language descriptions. For zero-shot evaluation, we cache the zero-shot classifier once it has been computed by the text encoder and reuse it for all subsequent predictions. This allows the cost(成本) of generating it to be amortized(分摊) across all the predictions in a dataset.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">HyperNetworks</td>
+<td align="left">超网络</td>
+<td align="left">-</td>
+<td align="left">Ha et al.,2016</td>
+</tr>
+<tr>
+<td align="left">Predicting Deep Zero-Shot Convolutional Neural Networks using Textual Descriptions</td>
+<td align="left">使用文本性的描述来预测深度零样本卷积网络</td>
+<td align="left">-</td>
+<td align="left">Lei Ba et al.(2015)</td>
+</tr>
+<tr>
+<td align="left">Write a Classifier: Zero-Shot Learning Using Purely Textual Descriptions</td>
+<td align="left">使用纯文本描述来做零样本学习</td>
+<td align="left">-</td>
+<td align="left">Elhoseiny et al.(2013)</td>
+</tr>
+</tbody>
+</table>
+<h6 id="313-initial-comparison-to-visual-n-grams">3.1.3 Initial Comparison to Visual N-Grams</h6>
+<p>In Table 1 we compare Visual N-Grams to CLIP. The best CLIP model improves accuracy on ImageNet from a proof of concept 11.5% to 76.2% and matches the performance of the original ResNet-50 despite using none of the 1.28 million crowd-labeled training examples available for this dataset. Additionally, the top-5 accuracy of CLIP models are noticeably higher than their top-1, and this model has a 95% top-5 accuracy, matching Inception-V4(Szegedy et al.,2016). The ability to match the performance of a strong, fully supervised baselines in a zero-shot setting suggests CLIP is a significant step towards flexible and practical zero-shot computer vision classifiers. As mentioned above, the comparison to Visual N-Grams is meant for contextualizing the performance of CLIP and should not be interpreted as a direct methods comparison between CLIP and Visual N-Grams as many performance relevant differences between the two systems were not controlled for. For instance, we train on a dataset that is 10x larger, use a vision model that requires nearly 100x more compute per prediction, likely used over 1000x their training compute, and use a transformer-based model which did not exist when Visual N-Grams was published. As a closer comparison, we trained a CLIP ResNet-50 on the same YFCC100M dataset that Visual N-Grams was trained on and found it matched their reported ImageNet performance within a V100 GPU day. This baseline was also trained from scatch instead of being initiallized from pre-trained ImageNet weights as in Visual N-Grams.</p>
+<table>
+<thead>
+<tr>
+<th align="left">-</th>
+<th align="left">aYahoo</th>
+<th align="left">ImageNet</th>
+<th align="left">SUN</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Visual N-Grams</td>
+<td align="left">72.4</td>
+<td align="left">11.5</td>
+<td align="left">23.0</td>
+</tr>
+<tr>
+<td align="left">CLIP</td>
+<td align="left">98.4</td>
+<td align="left">76.2</td>
+<td align="left">58.5</td>
+</tr>
+</tbody>
+</table>
+<p>Table 1. Comparing CLIP to prior zero-shot transfer image classification results. CLIP improves performance on all three datasets by a large amount. This improvement reflects(反映了) many differences in the 4 years since the development of Visual N-Grams(Li et al.,2017).</p>
+<p>CLIP also outperforms Visual N-Grams on the other 2 reported datasets. On a Yahoo, CLIP achieves a 95% reduction(减少) in the number of errors, and on SUN, CLIP more than doubles the accuracy of Visual N-Grams. To conduct a more comprehensive analysis and stress test, we implement a much larger evaluation suite detailed in Appendix A. In total we expand from the 3 datasets reported in Visual N-Grams to include over 30 datasets and compare to over 50 existing computer vision systems to contextualize results.</p>
+<h6 id="314-prompt-engineering-and-ensembling">3.1.4 Prompt Engineering And Ensembling</h6>
+<p>Most standard image classification datasets treat the information naming or describing classes which enables narural language based(基于自然语言) zero-shot transfer as an afterthought(事后想法). The vast majority of datasets annotate images with just a numeric id of the label and contain a file mapping these ids back to their names in English. Some datasets, such as Flowers102 and GTSRB, don't appear to include this mapping at all in their released versions preventing(防止) zero-shot transfer entirely. For many datasets, we observed these labels may be chosen somewhat(有些) haphazardly(随意) and do not anticipate(预测) issues related to zero-shot transfer which relies on task description in order to transfer successfully.</p>
+<p>A common issue is polysemy(歧义性). When the name of a class is the only information provided to CLIP's text encoder it is unable to differentiate which word sense is meant due to the lack of context. In some cases multiple meanings of the same word might be included as different classes in the same dataset! This happens in ImageNet which contains both construction cranes(建筑起重机) and cranes that fly.(飞的鹤). Another example is found in classes of the Oxford-IIIT Pet dataset where the word boxer(拳师犬、拳击手) is, from context, clearly referring to a breed of dog, but to a text encoder lacking context could just as likely refer to a type of athlete(运动员).</p>
+<p>Another issue we encountered is that it's relatively rare in our pre-training dataset for the text paired with the image to be just a single word. Usually the text is a full sentence describing the image in some way. To help bridge this distribution gap, we found that using the prompt template "A photo of a {label}." to be a good default that helps the text is about the content of the image. This often improves performance over the baseline of using only the label text. For instance, just using this prompt improves accuracy on ImageNet by 1.3%.</p>
+<p>Similar to the "prompt engineering" discussion around GPT-3(Brown et al.,2020; Gao et al.,2020), we have also observed that zero-shot performance can be significantly improved by customizing(定制) the prompt text to each task. A few, non exhaustive, examples follow(以下是一些非详尽的示例). We found that on several fine-grained image classification datasets that it helped to specify(指定) the category. For example on Oxford-IIIT Pets, using "A photo of a {label}, a type of pet." to help provide context worked well. Likewise, on Food101 specifying a type of food and on FGVC Aircraft a type of aircraft helped too. For OCR datasets, we found that putting quotes(引号)around the text or number to be recognized improved performance. Finally, we found that on satellite image classification datasets it helped to specify that the images were of this form and we use variants of "a satellite phot of a {label}."</p>
+<p>We also experimented with ensembling over multiple zero-shot classifiers as another way of improving performance.These classifiers are computed by using different context prompts such as "A photo of a big {label}" and "A photo of a small {label}". We construct the ensemble over the embedding space instead of probability space. This allows us to cache a single set of averaged text embeddings so that the compute cost of the emsemble is the same as using a single classifier when amortized(分摊) over many predictions. We've observed ensembling across many generated zero-shot classifiers to reliably improve performance and use it for the majority of datasets. On ImageNet, we ensemble 80 different context prompts and this improves performance by an additional 3.5% over the single default prompt discussed above. When considerd together, prompt engineering and ensembling improve ImageNet accuracy by almost 5%. In Figure 4 we visualize how prompt engineering and ensembling change the performance of a set of CLIP models compared to the contextless baseline approach of directly embedding the class name as done in Li et al.(2017).</p>
+<p>Figure4. Prompt engineering and ensembling improve zero-shot performance, Compared to the baseline of using contextless class names, prompt engineering and ensembling boost zero-shot classification performance by almost 5 points on average across 36 datasets. This improvement is similar to the gain from using 4 times more compute with the baseline zero-shot method but is "free" when amortized over many predictions.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Language Models are Few-Shot Learners</td>
+<td align="left">语言模型是小样本学习器</td>
+<td align="left">GPT-3</td>
+<td align="left">Brown et al., 2020</td>
+</tr>
+<tr>
+<td align="left">Making Pre-trained Language Models Better Few-shot Learners.</td>
+<td align="left">使预训练语言模型比少样本学习器更好</td>
+<td align="left">-</td>
+<td align="left">Gao et al.,2020</td>
+</tr>
+</tbody>
+</table>
+<h6 id="315-analysis-of-zero-shot-clip-performance">3.1.5 Analysis of Zero-shot CLIP Performance</h6>
+<p>Since task-agnostic zero-shot classifiers for computer vision have been understudied, CLIP provides a promising opportunity to gain a better understanding of this type of model. In this section, we conduct a study of various properties of CLIP's zero-shot classifiers. As a first question, we look simply at how well zero-shot classifiers perform. To contextualize this, we compare to the performance of a simple off-the-shelf(现成的) baseline: fitting a fully supervised, regularized, logistic regression classifier on the features of the canonical(经典的) ResNet-50. In Figure 5 we show this comparison across 27 datasets. Please see Apprendix A for details of datasets and setup.</p>
+<p>Figure 5. Zero-shot CLIP is competitive with a fully supervised baseline. Across a 27 dataset eval suite, a zero-shot CLIP classifier outperforms a fully supervised linear classifier fitted on ResNet-50 features on 16 datasets, including ImageNet.</p>
+<p>Zero-shot CLIP outperforms this baseline slightly more often than not and wins on 16 of the 27 datasets. Looking at individual datasets reveals(揭示了) some interesting behavior. On fine-grained classification tasks, we observe a wide spread in performance. On two of these datasets, Stanford Cars and Food101, zero-shot CLIP outperforms logistic regression on ResNet-50 features by over 20% while on two others, Flowers102 and FGVCAircraft, zero-shot CLIP underperforms by over 10%. On OxfordPets and Birdsnap, performance is much closer. We suspect these difference are primarily due to varying amounts of per-task supervision between WIT and ImageNet. On "general" object classification datasets such as ImageNet, CIFAR10/100,STL10, and PascalVOC2007 performance is relatively similar with a slight advantage for zero-shot CLIP in all cases. On STL10, CLIP achieves 99.3% overall which appears to be a new state of the art despite not using any training examples. Zero-shot CLIP significantly outperforms a ResNet-50 on two datasets measuting action recognition in videos. On Kinetics700, CLIP outperforma a ResNet-50 by 14.5%. Zero-shot CLIP also outperforms a ResNet-50's features by 7.7% on UCF1010. We speculate this is due to natural language providing wider supervision for visual concepts involving verbs, compared to the noun-centric object supervision in ImageNet.</p>
+<p>Looking at where zero-shot CLIP notably(尤其) underperforms, we see that zero-shot CLIP is quite weak on several specialized, complex, or abstract tasks such as satellite image classification (EuroSAT and RESISC45), lymph node tumor detection (PatchCamelyon), counting objects in synthetic scenes(CLEVRCounts), self-driving related tasks such as German traffic sign recognition(GTSRB), recognizing distance to the nearest car (KITTI Distance). These results highlight the poor capability of zero-shot CLIP on more complex tasks. By contrast, non-expert humans can robustly perform several of these tasks, such as counting, satellite image classification, and traffic sign recognition, suggesting significant room for improvement. However, we caution(警告) that it is unclear whether measuring zero-shot transfer, as opposed to few-shot transfer, is a meaningful evaluation for difficult tasks that a learner has no prior experience with, such as lymph node tumor classification for almost all humans(and possibly CLIP).</p>
+<p>While comparing zero-shot performance to fully supervised models contextualizes the task-learning capabilities of CLIP, comparing to few-shot methods if a more direct comparison, since zero-shot is its limit. In Figure 6, we visualize how zero-shot CLIP compares to few-shot logistic regression on the features of many image models including the best publicly available ImageNet models, self-supervised learning methods, and CLIP itself. While it is intuitive(直觉的) to expect zero-shot to underperform one-shot, we instead find that zero-shot CLIP matches the performance of 4-shot logistic regression on the same feature space. This is likely due to an important difference between the zero-shot and few-shot approach. First, CLIP's zero-shot classifier is generated via natural language which allows for visual concepts to be directly specified ("communicated"). By contrast, "normal" supervised learning must infer concepts indirectly form training examples. Context-less example-based learning has the drawback(缺点) that many different hypotheses can be consistent with the data, especially in the one-shot case. A single image often contains many different visual concepts. Although a capable learner is able to exploit visual cues and heuristics, such as assuming that the concept being demonstrated is the primary object in an image, there is no guarantee. </p>
+<p>Figure 6. Zero-shot CLIP outperforms few-shot linear probes. Zero-shot CLIP matches the average performance of a 4-shot linear classifier trained on the same feature space and nearly matches the best results of a 16-shot linear across classifier publicly available models. For both BiT-M and SimCLRv2, the best performing model is highlighted. Light gray lines are other models in the eval suite. The 20 datasets with at least 16 examples per class were used in this analysis. </p>
+<p>A potential resolution(解决方案) of this discrepancy(差异) between zero-shot and few-shot performance is to use CLIP's zero-shot classfifier as a prior for the weights of the few-shot classifier. While adding an L2 penlty towards the generated weights is a straightforward implementation of this idea, we found that hyperparameter optimization would often select for such a large value of this regularizer that resulting few-shot classifier was "just" the zero-shot classifier. Research into better methods of combing the strength of zero-shot transfer with flexibility of few-shot learning is a promising direction for future work.</p>
+<p>该段的含义不太懂。</p>
+<p>When comparing zero-shot CLIP to few-shot logistic regression on the features of other models, zero-shot CLIP roughtly(大致) matches the performance of the best performing 16-shot classifier in out evaluation suite, which uses the features of a BiT-M ResNet-152x2 trained on ImageNet-21K. We are certain that a BiT-L model trained on JFT-300M would perform even better but these models have not been publicly released. That a BiT-M ResNet-152x2 performs best in a 16-shot setting is somewhat surprising since, as analyzed in Section 3.2, the Noisy Student EfficientNet-L2 outperforms it in a fully supervised setting by almost 5% on average across 27 datasets.</p>
+<p>In addition to studying the average performance of zero-shot CLIP and few-shot logistic regression, we also examine performance on individual datasets. In Figure 7, we show estimates for the number of labeled examples per class that a logistic regression classifier on the same feature space requires to match the performance of zero-shot CLIP. Since zero-shot CLIP is also a linear classifier, this estimates the effective data efficiency of zero-shot transfer in this setting. In order to avoid training thousands of linear classifiers, we estimate the effective data efficiency based on a log-linear interpolation of the performance of a 1,2,4,6,8,16-shot(when possible), and a fully supervised linear classifier trained on each dataset. We find that zero-shot transfer can have widely varying efficiency per dataset from less than 1 labeled example per class to 184. Two datasets, Flowers102 and EuroSAT underperform one-shot models. Half of the datasets require less than 5 examples per class with a median of 5.4. However, the mean estimated data efficiency is 20.8 examples per class. This is due to the 20% of datasets where supervised classifiers require many labeled examples per class in order to match performance . On ImageNet, zero-shot CLIP matches the performance of a 16-shot linear classifier trained on the same feature space.</p>
+<p>图7</p>
+<p>Figure 7. The data efficiency of zero-shot transfer varies widely. Calculating the number of labeled examples per class a linear classifier on the same CLIP feature space requires to match the performance of the zeot-shot classifier contextualizes the effectiveness of zero-shot transfer. Values are estimated based on log-linear interpolation(插值) of 1,2,4,8,16-shot and fully supervised results. Performance varies widely from still underperforming a ont-shot classifier on two datasets to matching an estimated 184 labeled examples per class.</p>
+<p>If we assume(假定) that evaluation(评估) datasets are large enough that the parameters of linear classifiers trained on them are well estimated(估算), then because CLIP's zero-shot classifier is also a linear classifier, the performance of the fully supervised classifiers roughly sets an upper bound(上限) for what zero-shot transfer can achieve. In Figure 8 we compare CLIP's zero-shot performance with fully supervised linear classifiers across datastes. The dashed, y=x line represents an "optimal" zero-shot classifier that matches the performance of its fully supervised equivalent. For most datasets, the performance of zero-shot classifiers still underperform fully supervised classifiers by 10% to 25%, suggesting that there is still plenty(足够) of headroom for improving CLIP's task-learning and zero-shot transfer capabilities.</p>
+<p>图8</p>
+<p>Figure 8. Zero-shot performance is correlated with linear probe performance but still mostly sub-optimal. Comparing zero-shot and linear probe performance across datasets shows a strong correlation with zero-shot performance mostly shifted 10 to 25 points lower. On only 5 datasets does zero-shot performance approach linear probe  performance.</p>
+<p>There is a positive correlation of 0.82 (p-value &lt; 10^-6) between zero-shot performance and fully supervised performance, suggesting that CLIP is relatively(相当地) consistent(一致的) at connecting underlying(根本的、潜在的) representation and task learning to zero-shot transfer. However, zero-shot CLIP only approaches(接近) fully supervised performance on 5 datasets: STL10, CIFAR10, Food101, OxfordPets, and Caltech101. On all 5 datasets, both zero-shot accuracy and fully supervised accuracy are over 90%. This suggests that CLIP may be more effective at zero-shot transfer for tasks where its underlying representations are also high quality. The slope of a linear regression model predicting zero-shot performance as a function of fully supervised performance, zero-shot performance improves by 1.28%. However, the 95th-percentile confidence intervals still include values of less than 1(0.93-1.79).</p>
+<p>Over the past few years, empirical studies of deep learning systems have documented that performance is predictable as a function of important quantities such as training compute and dataset size(Hestness et al., 2017; Kaplan et al.,2020). The GPT family of models has so far demonstrated consistent improvements in zero-shot performance across a 1000x increase in training compute. In Figure 9, we check whether the zero-shot performance of CLIP follows a similar scaling pattern. We plot the average error rate of the 5 ResNet CLIP models across 39 evaluations on 36 different datastes and find that a similar log-log linear scaling trend holds for CLIP across a 44x increase in model compute. While the overall trend is smooth, we found that performance on individual evaluations can be much noisier. We are unsure whether this is caused by high variance between individual training runs sub-tasks(as documented in D'Amour et al.(2020)) masking a steadily improving trend or whether performance is actually non-monotonic(非单调的) as a function of compute on some tasks.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Deep Learning Scaling is Predictable, Empirically</td>
+<td align="left">深度学习模型的扩展性是可以预测的</td>
+<td align="left">-</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">Scaling Laws for Neural Language Models</td>
+<td align="left">深度语言模型的扩展性规则</td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>Figure 9. Zero-shot CLIP performance scales smoothly as a function of model compute. Across 39 evals on 36 different datasets, average zero-shot error is well modeled by a log-log linear trend across a 44x range of compute spanning 5 different CLIP models. Lightly shaded lines are performance on individual evals, showing that performance is much more varied despite the smooth overall trend.</p>
+<h2 id="32-representation-learning">3.2 Representation Learning</h2>
+<p>While we have extensively(广泛地) analyzed the task-learning capabilities of CLIP through zero-shot transfer in the pervious section, it is more common to study the representation learning capabilities of a model. There exist many ways to evaluate the quality of representations as well as disagreements(分歧) over what properties an "ideal" representation should have (Locatello et al.,2020). Fitting a linear classifier on a representation extracted from the model and measuring its performance on various datasets is a common approach. An alternative is measuring the performance of end-to-end fine-tuning of the model. This increases flexibility(灵活性), and prior work has convincingly demonstrated that fine-tuning outperforms linear classification on most image classification datasets(Kornblith et al.,2019;Zhai et al.,2019). While the high performance of fine-tuning motivates its study for practical reasons, we still opt for linear classifier based evaluation for several reasons. Our work is focused on developing a high-performing task and dataset-agnostic pre-training approach. Fine-tuning, because it adapts(适应、应用) representations to each dataset during the fine-tuning phase, can compensate for(补偿) and potentially mask failures to learn general and robust representations during the pre-training phase. Linear classifiers, because of their limited flexibility, instead hightlight these failures and provide clear feedback during development. For CLIP, training supervised linear classifier has the added benefit of being very similar to the approach used for its zero-shot classifiers which enables extensive comparisons and analysis in Section 3.1. Finally, we aim to compare CLIP to a comprehensive(综合的) set of existing models across many tasks. Studying 66 diferent models on 27 different datasets requires tuning 1782 different evaluations. Fine-tuning opens up a much larger design and hyper-parameter space, which makes it difficult to fairly evaluate and computationally expensive to compare a diverse set of techniques as discussed in other large scale empirical studies(Lucic et al.,2018; Choi et al.,2019). By comparison, linear classifiers require minimal hyper-parameter tuning and have standardized implementations and evaluation procedures. Please see Appendix A for further details on evaluation.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">A Sober look at the Unsupervised Learning of Disentangled Representations and their Evaluation</td>
+<td align="left">清醒地看待解开表征的无监督学习和他们的评估</td>
+<td align="left">-</td>
+<td align="left">Locatello et al.,2020</td>
+</tr>
+<tr>
+<td align="left">Do Better ImageNet Models Transfer Better?</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Kornblith et al.,2019</td>
+</tr>
+<tr>
+<td align="left">A Large-scale Study of Representation Learning with the Visual Task Adaptation Benchmark</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Zhai et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Are GANs Created Equal? A Large-Scale Study</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Lucic et al.,2018</td>
+</tr>
+<tr>
+<td align="left">On Empirical Comparisons of Optimizers for Deep Learning</td>
+<td align="left">用于深度学习的优化器的经验性比较</td>
+<td align="left">-</td>
+<td align="left">Choi et al.,2019</td>
+</tr>
+</tbody>
+</table>
+<p>Figure 10 summarizes our findings. To minimize selection effects that could raise concerns of confirmation or reporting bias, we first study performance on the 12 dataset evaluation suite from Kornblith et al.(2019). While small CLIP models such as a ResNet-50 and ResNet-101 outperform other ResNets trained on ImageNet-1K(BiT-S and the originals), they underperform ResNets trained on ImageNet-21K(BiT-M). These small CLIP models also underperform models in the EfficeintNet family with similar compute requirements. However, models trained with CLIP scale very well and the largest model we trained (ResNet-50x64) slightly outperforms the best performing existing model (a Noisy Student EfficientNet-L2) on both overall score and compute efficiency. We also find that CLIP vision transformers are about 3x more compute efficient than CLIP ResNets, which allows us to reach higher overall performance within our compute budget(预算). These results qualitatively replicate(复制) the findings of Dosovitskiy et al.(2020) which reported that vision transformers are more compute efficient than convnets when trained on sufficiently large datasets. Our best overall model is a ViT-L/14 that is fine-tuned at a higher resolution of 336 pixels on our dataset for 1 additional epoch. This model outperforms the best existing model across this evaluation suite by an average of 2.6%.</p>
+<p>Figure 10. Linear probe performance of CLIP models in comparison with state-of-the-art computer vision models, including EfficientNet(Tan &amp; Le,2019; Xie et al.,2020), MoCo(Chen et al.,2020d), Instagram-pretrained ResNeXt models (Mahajan et al.,2018;Touvron et al,.2019), BiT(Kolesnikov et al.,2019), ViT(Dosovitskiy et al.,2020), SimCLRv2(Chen et al.,2020c), BYOL(Grill et al.,2020), and the original ResNet models. (Left) Scores are averaged over 12 datasets studied by Kornblith et al.(2019). (Right) Scores are averaged over 27 datasets that contain a wider variety of distributions. Dotted lines indicate models fine-tuned or evaluated on images at a higher-resolution than pre-training. See Table 10 for individual scores and Figure 20 for plots for each dataset.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Efficientnet: Rethinking model scaling for convolutional neural networks.</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Tan &amp; Le,2019</td>
+</tr>
+<tr>
+<td align="left">Self-training with Noisy Student improves ImageNet classification</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Xie et al.,2020</td>
+</tr>
+<tr>
+<td align="left">Improved Baselines with Momentum Contrastive Learning</td>
+<td align="left">-</td>
+<td align="left">MoCo</td>
+<td align="left">Chen et al.,2020d</td>
+</tr>
+<tr>
+<td align="left">Exploring the Limits of Weakly Supervised Pretraining</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Mahajan et al.,2018</td>
+</tr>
+<tr>
+<td align="left">Fixing the train-test resolution discrepancy</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Touvron et al,.2019</td>
+</tr>
+<tr>
+<td align="left">Large Scale Learning of General Visual Representations for Transfer.</td>
+<td align="left">-</td>
+<td align="left">BiT</td>
+<td align="left">Kolesnikov et al.,2019</td>
+</tr>
+<tr>
+<td align="left">An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale</td>
+<td align="left">-</td>
+<td align="left">ViT</td>
+<td align="left">Dosovitskiy et al.,2020</td>
+</tr>
+<tr>
+<td align="left">Big Self-Supervised Models are Strong Semi-Supervised Learners</td>
+<td align="left">-</td>
+<td align="left">SimCLRv2</td>
+<td align="left">Chen et al.,2020c</td>
+</tr>
+<tr>
+<td align="left">Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning</td>
+<td align="left">-</td>
+<td align="left">BYOL</td>
+<td align="left">rill et al.,2020</td>
+</tr>
+<tr>
+<td align="left">Do Better ImageNet Models Transfer Better?</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Kornblith et al.,2019</td>
+</tr>
+</tbody>
+</table>
+<p>As Figure 21 qualitatively shows, CLIP models learn a wider(相比更广泛的) set of tasks than has previously been demonstrated in a single computer vision model trained ene-to-end from random initialization. These tasks include geo-localization, optical character recognition, facial emotion recognition, and action recognition. None of these tasks are measured in the evaluation suite of Kornblith et al.(2019). This could be argued to be a form of selection bias in Kornblith et al.(2019)'s study towards tasks that overlap(重叠) with ImageNet. To address this, we also measure performance on a broader 27 dataset evaluation suite. This evaluation suite, detailed in Appendix A includes datasets representing the aforementioned tasks, German Traffic Signs Recognition Benchamark(Stallamp et al.,2011), as well as several other datasets adapted from VTAB(Zhai et al.,2019).</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Do Better ImageNet Models Transfer Better?</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Kornblith et al.,2019</td>
+</tr>
+<tr>
+<td align="left">A Large-scale Study of Representation Learning with the Visual Task Adaptation Benchmark</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Zhai et al.,2019</td>
+</tr>
+</tbody>
+</table>
+<p>On this broader evaluation suite, the benefits of CLIP are more clear. All CLIP models, regradless of scale, outperform all evaluated systems in terms of compute efficiency. The improvement in average score of the best model over previous systems increases from 2.6% to 5%. We also find taht self-supervised systems do noticeably(明显) better on our broader evaluation suite. For instance, while SimCLRv2 still underperforms BiT-M on average on the 12 datasets of Kornblith et al.(2019), SimCLRv2 outperforms BiT-M on our 27 dataset evaluation suite. These findings suggest continuing to expand task diversity and coverage in order to better understand the "general" performance of systems. We suggest additional evaluation efforts along the lines of VTAB to be valuable.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Do Better ImageNet Models Transfer Better?</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Kornblith et al.,2019</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to the aggregate analysis above, we visualize per-dataset differences in the performance of the best CLIP model and the best model in our evaluation suite across all 27 datasets in Figure 11. CLIP outperforms the Noisy Student EfficientNet-L2 on 21 of the 27 datasets. CLIP improves the most on tasks which require OCR(SST2 and HatefulMemes), geo-localization and scene recognition(Country211, SUN397), and activity recognition in videos(Kinetics700 and UCF101). In addition CLIP also does much better on fine-grained car and traffic sign recognition(Stanford Cars and GTSRB). This may reflect a problem with overly narrow supervision in ImageNet. A result such as the 14.7% improvement on GTSRB could be indicative of an issue with ImageNet-1K, which has only a single label for all traffic and street signs. This could encourage a supervised representation to collapse(崩溃、坍塌) intra-class details and hurt accuracy on a fine-grained downstream task. As mentioned, CLIP still underperforms the EfficientNet on several datasets. Unsurprisingly, the dataset that the EfficientNet does best relative to CLIP on is the one it was trained on: ImageNet. The EfficientNet also slightly outperforms CLIP on low-resolution datasets such as CIFAR10 and CIFAR100. We suspect this is at least partly due to the lack of scale-based data augmentation in CLIP. The EfficientNet also does slightly better on PatchCamelyon and CLEVRCounts, datasets where overall performance is still low for both approaches.</p>
+<p>Figure 11. CLIP's features outperform the features of the best ImageNet model on a wide variety of datasets. Fitting a linear classifier on CLIP's features outperforms using the Noisy Student EfficientNet-L2 on 21 out of 27 datasets.</p>
+<h2 id="33-robustness-to-natural-distribution-shift-clip">3.3 Robustness to Natural Distribution Shift (有自然的分布偏移的情况下 CLIP的鲁棒性是怎样的)</h2>
+<p>In 2015, it was announced that a deep learning model exceeded human performance on the ImageNet test set(He et al.,2015). However, research in the subsequent(后来的) years has repeatedly found that these models still make many simple mistakes(Dodge &amp; Karam,2017;Geirhos et al.,2018;Alcorn et al.,2019), and new benchmarks testing these systems has often found their performance to be much lower than both their ImageNet accuracy and human accuracy(Recht et al.,2019;Barbu et al.,2019). What explains this discrepancy? Various ideas have been suggested and studied (IIyas et al.,2019;Geirhos et al.,2020). A common theme of proposed explanations is that deep learning models are exceedingly adept at(非常擅长的) finding correlations and patterns which hold across their trainiing dataset and thus improve in-distribution performance. However many of these correlations and patterns are actually spurious(虚假的) and do not hold for other distributions and result in large drops in performance on other datasets.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">A Study and Comparison of Human and Deep Learning Recognition Performance Under Visual Distortions</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Dodge &amp; Karam,2017</td>
+</tr>
+<tr>
+<td align="left">ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Geirhos et al.,2018</td>
+</tr>
+<tr>
+<td align="left">Strike(With) a Pose: Neural Networks Are Easily Fooled by Strange Poses of Familliar Objects</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Alcorn et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Do ImageNet Classifiers Generalize to ImageNet</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Recht et al.,2019</td>
+</tr>
+<tr>
+<td align="left">ObjectNet: A large-scale bias-controlled dataset for pushing the limits of object recognition models</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Barbu et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Adversarial(对抗的) Examples Are Not Bugs, They Are Features</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">IIyas et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Shortcut Learning in Deep Neural Networks</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Geirhos et al.,2020</td>
+</tr>
+</tbody>
+</table>
+<p>We caution that(警告), to date, (至今为止) most of these studies limit their evaluation to models trained on ImageNet. Recalling the topic of discussion, it may be a mistake to generalize too far from these initial findings. To what degree are these failures attibutable to deep learning, ImageNet, or some combination of the two? CLIP models, which are trained via natural language supervision on a very large dataset and are capable of high zero-shot performance, are an opportunity to investigate this question from a different angle.</p>
+<p>Taori et al.(2020) is a recent comprehensive study moving towards quantifying and understanding these bahaviors for ImageNet models.Taori et al.(2020) study how the performance of ImageNet models change where evaluated on natural distribution shifts. They measure performance on a set of 7 distribution shifts: ImageNetV2 (Recht et al.,2019), ImageNet Sketch(Wang et al.,2019), Youtube-BB and ImageNet-Vid(Shankar et al.,2019), ObjectNet(Barbu et al.,2019), ImageNet Adversarial(Hendrycks et al.,2019), and ImageNet Rendition(Hendrycks et al.,2020a). They distinguish(区分) these datasets, which all consist of novel images collected from a variety of sources, from synthetic distribition shifts such as ImageNet-C(Hendrycks &amp; Dietterich,2019), Stylized ImageNet(Geirhos et al.,2018), or adversarial attacks(Goodfellow et al.,2014) which are created by perturbing(扰动) existing images in various ways. They propose this distinction(区别) because in part because they find that while several techniques have been demonstrated to improve performance on synthetic distribution shifts, they often fail to yield consistent improvements on natural distributions.</p>
+<table>
+<thead>
+<tr>
+<th align="left">论文名称</th>
+<th align="left">标题翻译</th>
+<th align="left">论文别名</th>
+<th align="left">论文时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Measuring Robustness to Natural Distribution Shifts in Image Classification</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Taori et al.(2020)</td>
+</tr>
+<tr>
+<td align="left">Do ImageNet Classifiers Generalize to ImageNet</td>
+<td align="left">-</td>
+<td align="left">ImageNetV2</td>
+<td align="left">Recht et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Learning Robust Global Representations by Penalizing Local Predictive Power</td>
+<td align="left">-</td>
+<td align="left">ImageNet Sketch</td>
+<td align="left">Wang et al.,2019</td>
+</tr>
+<tr>
+<td align="left">Do Image Classifiers Generalize Across Time</td>
+<td align="left">-</td>
+<td align="left">ImageNet-Vid</td>
+<td align="left">Shankar et al.,2019</td>
+</tr>
+<tr>
+<td align="left">ObjectNet: A large-scale bias-controlled dataset for pushing the limits of object recognition models</td>
+<td align="left">-</td>
+<td align="left">ObjectNet</td>
+<td align="left">Barbu et al.,2019</td>
+</tr>
+<tr>
+<td align="left">The Many Faces of Robustness: A Critical Analysis of Out-of-Distribution Generalization</td>
+<td align="left">-</td>
+<td align="left">ImageNet Rendition</td>
+<td align="left">Hendrycks et al.,2020a</td>
+</tr>
+<tr>
+<td align="left">Benchmarking Neural Network Robustness to Common Corruptions and Perturbations</td>
+<td align="left">-</td>
+<td align="left">ImageNet-C</td>
+<td align="left">Hendrycks &amp; Dietterich,2019</td>
+</tr>
+<tr>
+<td align="left">ImageNet-trained CNNs are biased towards texture; increasing shape bias improves accuracy and robustness</td>
+<td align="left">-</td>
+<td align="left">Stylized ImageNet</td>
+<td align="left">Geirhos et al.,2018</td>
+</tr>
+<tr>
+<td align="left">Explaining and Harnessing Adversarial Examples</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">Goodfellow et al.,2014</td>
+</tr>
+</tbody>
+</table>
+<p>Across these collected datasets, the accuracy of ImageNet models drop well below the expectation set by the ImageNet validation set. For the following summary discussion we report average accuracy across all 7 natural distribution shift datasets and average accuracy across the corresonding class subsets of ImageNet unless otherwise specified. Additionally, for Youtube-BB and ImageNet-Vid, which have two different evaluation settings, we use the average of pm-0 and pm-10 accuracy.</p>
+<p>...</p>
+<h1 id="6-limitations">6. Limitations</h1>
+<p>There are still many limitations to CLIP. While several of these are discussed as part of analysis in various sections, we summarize and collect them here.</p>
+<p>On datasets with training splits, the performance of zero-shot CLIP is on average competitive with the simple supervised baseline of a linear classifier on top of ResNet-50 features. On most of these datasets, the performance of this baseline is now well below the overall state of the art. Significant work is still needed to improve the task learning and trasfer capabilities of CLIP. While scaling has so fat steadily improved performance and suggests a route for continued improvement, we estimate around a 1000x increase in compute is required for zero-shot CLIP to reach overall state-of-the-art performance. This is infeasible(不可行的) to train with current hardware. Further research into improving upon the computational and data efficiency of CLIP will be necessary.</p>
+<p>Analysis in Section 3.1 found that CLIP's zero-shot performance is still quite weak on several kinds of tasks. When compared to task-specific models, the performance of CLIP is poor on several types of fine-grained classification such as differentiating models of cars, species of flowers, and variants of aircraft. CLIP also struggles with more abstract and systematic tasks such as counting the number of objects in an image. Finally for novel tasks which are unlikely to be included in CLIP's pre-training dataset, such as classifying the distance to the nearest car in a photo, CLIP's performance can be near random. We are confident that there are still many, many, tasks where CLIP's zero-shot performance is near chance level.</p>
+<p>While zero-shot CLIP generalizes well to many natural image distributions as investigated in Section 3.3, we've observed that zero-shot CLIP still generalizes poorly to data that is truly out-of-distribution for it. An illustrative(说明性的) example occurs for the task of OCR as reported in Appendix E. CLIP learns a high quality semantic OCR representation that performs well on digitally rendered text, which is common in its pre-training dataset, as evidenced by performance on Rendered SST2. However, CLIP only achieves 88% accuracy on the handwritten digits of MNIST. An embarrassingly(尴尬地) simple baseline of logistic regression on raw pixels outperforms zero-shot CLIP. Both semantic and near-duplicate nearest-neighbor retrieval verify that there are almost no images that resemble MNIST digits in our pre-training dataset. This suggests CLIP does little to address the underlying(潜在的) problem of brittle(脆的) generalization of deep learning models. Instead CLIP tries to circumvent(规避) the problem and hopes that by training on such a large and varied dataset that all data will be effectively in-distribution. This is a naive assumption that, as MNIST demonstrates, is easy to violate(违反).</p>
+<p>Although CLIP can flexibly generate zero-shot classifiers for a wide variety of tasks and datasets, CLIP is still limited to choosing from only those concepts in a given zero-shot classifier. This is a significant restriction compared to a truly flexible approach like image captioning which could generate novel outputs.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            回到页面顶部
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="页脚" >
+      
+        
+        <a href="../paper_interpretation/" class="md-footer__link md-footer__link--prev" aria-label="上一页: 论文详解" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                上一页
+              </span>
+              论文详解
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../paper_code/main/" class="md-footer__link md-footer__link--next" aria-label="下一页: 代码阅读" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                下一页
+              </span>
+              代码阅读
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2022 Donglin Cui
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/donglin8506" target="_blank" rel="noopener" title="GitHub | Donglin-Cui" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.top", "navigation.indexes", "navigation.expand", "search.suggest", "search.highlight"], "search": "../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.config.lang": "ja", "search.config.pipeline": "trimmer, stemmer", "search.config.separator": "[\\s\\-\uff0c\u3002]+", "search.placeholder": "\u641c\u7d22", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version.title": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.078830c0.min.js"></script>
+      
+    
+  </body>
+</html>
