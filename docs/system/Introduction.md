@@ -25,3 +25,7 @@ import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 ```
 
+
+## 如何在vscode调试pytorch并行模式DDP
+
+参考文档 https://blog.csdn.net/qianbin3200896/article/details/108182504
